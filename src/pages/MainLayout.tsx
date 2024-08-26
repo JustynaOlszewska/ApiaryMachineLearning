@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Breadcrumb, Button, Drawer, DrawerProps, Layout, Menu, RadioChangeEvent, theme } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 
 const { Header, Content, Footer } = Layout;
 import SelectLang from "../organism/SelectLang";
 import Sider from "antd/es/layout/Sider";
 import { apiaryStore } from "../stores/ApiaryStore";
+import EssentialLink from "../organism/EssentialLink";
+import { NavLink } from "react-router-dom";
 // interface MainLayoutProps {}
 const siderStyle: React.CSSProperties = {
+  paddingTop: "100px",
   overflow: "auto",
   height: "100vh",
   position: "fixed",
@@ -17,33 +21,77 @@ const siderStyle: React.CSSProperties = {
   scrollbarColor: "unset",
 };
 const MainLayout = () => {
+  // const miniState = useRef(false);
+  const [miniState, setMiniState] = useState(false);
+
+  const hideNavigationDescription = () => {
+    var elements = document.querySelectorAll(".navigation-description");
+    console.log("elements", elements);
+    elements.forEach((element) => {
+      element?.classList.toggle("toggle-navigation-description");
+    });
+  };
+  const drawerClick = (e: Event) => {
+    if (miniState) {
+      setMiniState(false);
+      e.stopPropagation();
+    } else {
+      setMiniState(true);
+    }
+  };
+
   return (
-    <Layout hasSider>
-      <Sider style={siderStyle}>
-        <div className="demo-logo-vertical" />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]} items={apiaryStore.essentialLinks} />
-        {/* <EssentialLink
+    <Layout style={{ marginInlineStart: 200 }}>
+      <Header style={{ display: "flex", alignItems: "center", position: "fixed", zIndex: 10, left: 0, right: 0 }}>
+        <Button
+          icon={<MenuOutlined />}
+          onClick={(event: any) => {
+            hideNavigationDescription();
+            drawerClick(event);
+          }}
+        />
+
+        {/* <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={["2"]}
+            //   items={items}
+            style={{ flex: 1, minWidth: 0 }}>
+            <EssentialLink />
+          </Menu> */}
+        <SelectLang />
+      </Header>
+      <Layout hasSider>
+        <Sider style={siderStyle}>
+          {/* <div className="demo-logo-vertical" /> */}
+          <Menu
+            theme="dark"
+            mode="vertical"
+            defaultSelectedKeys={["2"]}
+            //   items={items}
+            style={{ flex: 1, minWidth: 0 }}>
+            {/* {apiaryStore.essentialLinks.map((link) => {
+            console.log("wwwwwwwwwwwwwwwwwwwwwwww", link);
+            return (
+              <Menu.Item key="1">
+                <NavLink to="/apiaries">{link.title}</NavLink>
+              </Menu.Item>
+            );
+          })} */}
+            <EssentialLink />
+          </Menu>
+          {/* <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]} items={apiaryStore.essentialLinks} /> */}
+          {/* <EssentialLink
           v-for="link in apiaryStore.essentialLinks"
           :key="link.link"
           v-bind="link"
           @get-data="apiaryStore.getInitApiaryData"
         /> */}
-      </Sider>
-      <Layout style={{ marginInlineStart: 200 }}>
-        <Header style={{ display: "flex", alignItems: "center" }}>
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={["2"]}
-            //   items={items}
-            style={{ flex: 1, minWidth: 0 }}
-          />
-          <Button>click</Button>
-          <SelectLang />
-        </Header>
-
-        <Content></Content>
-        <Footer>Footer</Footer>
+        </Sider>
+        <Layout>
+          <Content></Content>
+          <Footer>Footer</Footer>
+        </Layout>
       </Layout>
     </Layout>
   );
