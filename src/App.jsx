@@ -3,7 +3,7 @@
 // import viteLogo from "/vite.svg";
 // import React from "react";
 import { RouterProvider } from "react-router-dom";
-import router from "./routes/routes.ts";
+import router from "./routes/routes.tsx";
 import "./App.css";
 
 const App = () => {
