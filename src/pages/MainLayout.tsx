@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Breadcrumb, Button, Drawer, DrawerProps, Layout, Menu, RadioChangeEvent, theme } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import { Outlet } from "react-router-dom"; // Dodaj import Outlet
 
 const { Header, Content, Footer } = Layout;
 import SelectLang from "../organism/SelectLang";
@@ -89,7 +90,9 @@ const MainLayout = () => {
         /> */}
         </Sider>
         <Layout>
-          <Content></Content>
+          <Content>
+            <Outlet />
+          </Content>
           <Footer>Footer</Footer>
         </Layout>
       </Layout>

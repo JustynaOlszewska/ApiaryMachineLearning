@@ -4,6 +4,9 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 const MainLayout = lazy(() => import("../pages/MainLayout"));
 const ApiariesList = lazy(() => import("../pages/ApiariesList"));
+const LoginForm = lazy(() => import("../pages/LoginForm"));
+const RegisterForm = lazy(() => import("../pages/RegisterForm"));
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +24,34 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Ładowanie...</div>}>
             <ApiariesList />
+          </Suspense>
+        ),
+        // async beforeEnter(to, from, next) {
+        //   const apiaryStore = useApiary();
+        //   await apiaryStore.getInitApiaryData();
+        //   return next();
+        // },
+      },
+      {
+        path: "login",
+        // name: "apiaries",
+        element: (
+          <Suspense fallback={<div>Ładowanie...</div>}>
+            <LoginForm />
+          </Suspense>
+        ),
+        // async beforeEnter(to, from, next) {
+        //   const apiaryStore = useApiary();
+        //   await apiaryStore.getInitApiaryData();
+        //   return next();
+        // },
+      },
+      {
+        path: "register",
+        // name: "apiaries",
+        element: (
+          <Suspense fallback={<div>Ładowanie...</div>}>
+            <RegisterForm />
           </Suspense>
         ),
         // async beforeEnter(to, from, next) {
