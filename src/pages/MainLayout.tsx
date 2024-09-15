@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom"; // Dodaj import Outlet
 const { Header, Content, Footer } = Layout;
 import SelectLang from "../organism/SelectLang";
 import Sider from "antd/es/layout/Sider";
-import { apiaryStore } from "../stores/ApiaryStore";
+import apiaryStore from "../stores/ApiaryStore";
 import EssentialLink from "../organism/EssentialLink";
 import { NavLink } from "react-router-dom";
 // interface MainLayoutProps {}
@@ -23,6 +23,7 @@ const siderStyle: React.CSSProperties = {
 };
 const MainLayout = () => {
   // const miniState = useRef(false);
+
   const [miniState, setMiniState] = useState(false);
 
   const hideNavigationDescription = () => {

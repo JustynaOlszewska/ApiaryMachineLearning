@@ -1,0 +1,40 @@
+.route-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+
+  & .text-link {
+    color: white;
+    text-decoration: none;
+    width: 100%;
+    display: flex;
+  }
+
+  &.active {
+    background-color: #ffb74d;
+  }
+
+  & .navigation-icon {
+    width: 100%;
+  }
+
+  & .navigation-description {
+    position: fixed;
+    left: 60px;
+    display: block;
+  }
+
+  & .toggle-navigation-description {
+    display: none;
+  }
+}
+
+// .v-enter-active,
+// .v-leave-active {
+//   transition: opacity 1.5s ease;
+// }
+
+// .v-enter-from,
+// .v-leave-to {
+//   opacity: 0;
+// }

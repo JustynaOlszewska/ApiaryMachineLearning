@@ -1,24 +1,89 @@
-import { Menu } from "antd";
-import React, { useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { apiaryStore } from "../stores/ApiaryStore";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import apiaryStore from "../stores/ApiaryStore"; // Import MobX store
+import PropTypes from "prop-types";
+import { Pages } from "../interfaces/apiary"; // Zakładam, że masz ten enum
+import Icon from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../assets/styles/organism/_essentialLink.scss";
+interface EssentialLinkProps {
+  title: string;
+  link: string;
+  icon: string;
+}
+const EssentialLink = observer(({ title, link, icon }: EssentialLinkProps) => {
+  const { essentialLinks } = apiaryStore;
+  const [show, setShow] = useState(true);
+  const location = useLocation();
 
-// interface Props {
+  useEffect(() => {
+    const currentRoute = sessionStorage.getItem("currentRoute") || Pages.LOGIN;
 
-// }
+    if (currentRoute) {
+      setStyleActiveElement(currentRoute, true);
+    }
+  }, []);
 
-const EssentialLink = () => {
-  return apiaryStore.essentialLinks.map((link) => {
-    console.log("wwwwwwwwwwwwwwwwwwwwwwww", link);
-    return (
-      <Menu.Item key="1">
-        <NavLink to={`/${link.route}`}>{link.title}</NavLink>
-      </Menu.Item>
-    );
-  });
-};
+  useEffect(() => {
+    if (title) {
+      const currentRoute = location.pathname.includes(title.toLowerCase()) && title;
+      if (currentRoute) {
+        setStyleActiveElement(currentRoute);
+      }
+    }
+  }, [location.pathname]);
+
+  const setStyleActiveElement = (title: string, init = false) => {
+    const groupElement = document.querySelectorAll("[data-active]");
+    groupElement.forEach((el) => {
+      if (title !== title) return;
+      if (el.getAttribute("data-active") === title) {
+        el.classList.add("active");
+        apiaryStore.setCurrentRoute(title);
+        return;
+      }
+      if (!init) {
+        el.classList.remove("active");
+      }
+    });
+  };
+  // return <div>eeeeeeeeeeeeee</div>;
+  return essentialLinks.map((link: { title: string; link: string; icon: any }) => (
+    <div className="route-wrapper" data-active={link.title} data-test="link" key={link.link}>
+      <Link to={link.link} onClick={() => setShow(!show)} className="text-link">
+        <div className="icon-section">
+          <FontAwesomeIcon icon={link.icon} />
+        </div>
+        <span className="navigation-description">{title}</span>
+      </Link>
+    </div>
+  ));
+});
 
 export default EssentialLink;
+
+// import { Menu } from "antd";
+// import React, { useRef, useState } from "react";
+// import { Link, NavLink } from "react-router-dom";
+// import apiaryStore from "../stores/ApiaryStore";
+
+// // interface Props {
+
+// // }
+
+// const EssentialLink = () => {
+//   return apiaryStore.essentialLinks.map((link) => {
+//     console.log("wwwwwwwwwwwwwwwwwwwwwwww", link);
+//     return (
+//       <Menu.Item key={link.title}>
+//         <NavLink to={`/${link.route}`}>{link.title}</NavLink>
+//       </Menu.Item>
+//     );
+//   });
+// };
+
+// export default EssentialLink;
 
 /* <template>y
   <Transition>
