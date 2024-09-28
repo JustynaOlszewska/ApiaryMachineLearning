@@ -6,10 +6,10 @@ const MainLayout = lazy(() => import("../pages/MainLayout"));
 const ApiariesList = lazy(() => import("../pages/ApiariesList"));
 const LoginForm = lazy(() => import("../pages/LoginForm"));
 const RegisterForm = lazy(() => import("../pages/RegisterForm"));
-
+import apiaryStore from "../stores/ApiaryStore";
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/:lang",
     // path: "/:lang",
     // element: <MainLayout />,
     element: (
@@ -17,6 +17,7 @@ const router = createBrowserRouter([
         <MainLayout />
       </Suspense>
     ),
+
     children: [
       {
         path: "apiaries",
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
             <ApiariesList />
           </Suspense>
         ),
+        loader: async ({ request, params }) => {
+          await apiaryStore.getInitApiaryData();
+          return null;
+        },
         // async beforeEnter(to, from, next) {
         //   const apiaryStore = useApiary();
         //   await apiaryStore.getInitApiaryData();

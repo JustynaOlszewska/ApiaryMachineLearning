@@ -1,0 +1,47 @@
+.hiding-el {
+  transform: translateX(130px);
+  width: 0;
+}
+.smooth-hiding {
+  transform: translateX(0);
+  width: 120px;
+}
+.transform {
+  transition: all 2s ease;
+}
+.visibility-el {
+  visibility: hidden;
+}
+.smooth-visibility {
+  visibility: visible;
+}
+.visibility {
+  transition: all 2s ease;
+  transition-delay: 2s;
+}
+.display-el {
+  width: 0;
+}
+.smooth-display {
+  width: 40px;
+}
+.display {
+  transition: all 0.2s ease;
+}
+:deep(.q-table__card .q-table__middle) {
+  height: 300px;
+}
+:deep(.q-table__top .q-table__control) {
+  flex-wrap: nowrap;
+  height: 100%;
+}
+:deep(.q-table__container > div:first-child) {
+  background-color: lightgrey;
+  height: 54px;
+}
+:deep(.q-table__container > div:last-child) {
+  background-color: lightgrey;
+}
+.width {
+  width: 140px;
+}

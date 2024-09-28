@@ -3,11 +3,14 @@ import { getAsync, postAsync, deleteAsync, putAsync } from "../asyncAxios";
 import i18n from "i18next";
 import { ApiaryData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { db } from "../../src/firebase.js";
+// my-app\src\firebase.js
 import { faSignsPost, faCalendar, faBoxesStacked, faSignInAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 class ApiaryStore {
   [x: string]: any;
   counter = 0;
-  dataApiary = null;
+  dataApiary = [];
   dataChart = {
     labels: null,
     datasets: [
@@ -32,32 +35,32 @@ class ApiaryStore {
     {
       title: "Apiaries",
       icon: faSignsPost,
-      link: "/pl/apiaries",
+      link: "apiaries",
       route: "apiaries",
     },
     {
       title: "Calendar",
       icon: faCalendar,
-      link: "/pl/calendar",
+      link: "calendar",
       route: "calendar",
     },
     {
       title: "Beehives",
       icon: faBoxesStacked,
-      link: "/pl/beehives",
+      link: "beehives",
       route: "beehives",
     },
     {
       title: "Login",
       icon: faSignInAlt,
-      link: "/pl/login",
+      link: "login",
       route: "login",
     },
     {
       title: "Register",
       icon: faUserPlus,
       // icon: <FontAwesomeIcon icon={faUserPlus} />,
-      link: "/pl/register",
+      link: "register",
       route: "register",
     },
   ];
@@ -90,61 +93,87 @@ class ApiaryStore {
       headers: { "x-auth-token": token },
     };
 
-    if (token) {
-      try {
-        this.loading = true;
-        const r = await deleteAsync({
-          url: `http://localhost:5000/api/apiary/rows/${id}`,
-          setStatus: this.setStatus.bind(this),
-          config,
-        });
+    // if (token) {
+    try {
+      this.loading = true;
+      const r = await deleteAsync({
+        url: `http://localhost:5000/api/apiary/rows/${id}`,
+        setStatus: this.setStatus.bind(this),
+        config,
+      });
 
-        if (r) {
-          this.getInitApiaryData();
-          runInAction(() => {
-            this.loading = false;
-          });
-        }
-      } catch (error) {
+      if (r) {
+        this.getInitApiaryData();
         runInAction(() => {
           this.loading = false;
         });
-        console.error("Error removing apiary:", error);
       }
+    } catch (error) {
+      runInAction(() => {
+        this.loading = false;
+      });
+      console.error("Error removing apiary:", error);
     }
+    // }
   }
 
   async getInitApiaryData() {
-    const token = sessionStorage.getItem("token");
-    const config = {
-      headers: { "x-auth-token": token },
-    };
+    // const token = sessionStorage.getItem("token");
+    // const config = {
+    //   headers: { "x-auth-token": token },
+    // };
 
-    if (token) {
-      try {
-        const data = await getAsync({
-          url: "http://localhost:5000/api/apiary/rows",
-          setStatus: this.setStatus.bind(this),
-          config,
-        });
-
-        if (data) {
+    // if (token) {
+    try {
+      // const data = await getAsync({
+      //   url: "http://localhost:5000/api/apiary/rows",
+      //   setStatus: this.setStatus.bind(this),
+      //   config,
+      // });
+      console.log("dddddddddddddddddd111", db);
+      this.dataApiary = [];
+      const querySnapshot = await getDocs(collection(db, "Apiaries"));
+      // console.log("dddddddddddddddddd222", querySnapshot);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log("ddddddddddddddddddd", doc.id, " => ", doc.data());
+        if (doc.data()) {
           runInAction(() => {
-            this.setAllDataApiary(data);
+            const data = doc.data();
+            this.dataApiary = [...this.dataApiary, data] as any;
+            // this.setAllDataApiary(doc.data());
             this.loading = false;
           });
         }
-      } catch (error) {
-        runInAction(() => {
-          this.loading = false;
-        });
-        console.error("Error fetching apiary data:", error);
-      }
-    } else {
-      this.router.push({
-        path: `/${sessionStorage.getItem("currentLang")?.toLowerCase()}/login`,
       });
+      // const citiesRef = collection(db, "Apiaries");
+      // console.log("dddddddddddddddddd222", citiesRef, db);
+
+      // const querySnapshot = await getDocs(citiesRef);
+      // console.log("dddddddddddddddddd111", querySnapshot);
+
+      // querySnapshot.forEach((doc) => {
+      //   // doc.data() is never undefined for query doc snapshots
+      //   console.log("dddddddddddddddddd", doc.id, " => ", doc.data());
+      //   if (doc.data()) {
+      //     runInAction(() => {
+      //       this.setAllDataApiary(doc.data());
+      //       this.loading = false;
+      //     });
+      //   }
+      // });
+    } catch (error) {
+      runInAction(() => {
+        this.loading = false;
+      });
+      console.error("Error fetching apiary data:", error);
     }
+    // }
+    // else {
+    //   this.router.push({
+    //     path: `/${sessionStorage.getItem("currentLang")?.toLowerCase()}/login`,
+    //   });
+    // }
   }
 
   async addApiaryData(data: any) {
@@ -210,9 +239,9 @@ class ApiaryStore {
   }
 
   setAllDataApiary(data: any) {
-    data.forEach((el: any, index: number) => {
-      el.index = index + 1;
-    });
+    // data.forEach((el: any, index: number) => {
+    //   el.index = index + 1;
+    // });
     this.dataApiary = data;
     this.setChartApiary(data);
     sessionStorage.setItem("dataApiary", JSON.stringify(data));
