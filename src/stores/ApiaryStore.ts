@@ -11,6 +11,7 @@ class ApiaryStore {
   [x: string]: any;
   counter = 0;
   dataApiary = [];
+  idApiary: null | number | string = null;
   dataChart = {
     labels: null,
     datasets: [

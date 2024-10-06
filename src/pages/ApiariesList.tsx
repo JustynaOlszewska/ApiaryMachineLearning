@@ -8,6 +8,9 @@ import { withNamespaces } from "react-i18next";
 import { cloneDeep } from "lodash";
 import "../assets/styles/pages/_apiariesList.scss";
 const { Option } = Select;
+import i18n from "../../src/i18n.js";
+import i18next from "i18next";
+import { Link } from "react-router-dom";
 
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -27,6 +30,8 @@ interface ApiaryProps {
   t: any;
 }
 const ApiaryTable = observer(({ t }: ApiaryProps) => {
+  // const { i18n } = useTranslation();
+
   const { dataApiary } = apiaryStore;
   useEffect(() => {
     // apiaryStore.getInitApiaryData();
@@ -104,13 +109,26 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
       key: "action",
       render: (
         _: any,
-        record: { name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined }
-      ) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
+        record: {
+          name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined;
+          key: number | string;
+        }
+      ) => {
+        console.log("record", record);
+        return (
+          <Space size="middle">
+            <a>Invite {record.name}</a>
+            <a>Delete</a>
+            <Link
+              to={`/${i18next.language}/apiaries/${record.key}/edit`}
+              onClick={() => {
+                apiaryStore.idApiary = record.key;
+              }}>
+              Edit
+            </Link>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -215,7 +233,13 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
 
         {/* Przycisk do dodania */}
         <Button type="primary" icon={<PlusOutlined />}>
-          Dodaj Pasiekę
+          <Link
+            to={`/${i18next.language}/apiaries/create`}
+            onClick={() => {
+              apiaryStore.idApiary = null;
+            }}>
+            Dodaj Pasiekę
+          </Link>
         </Button>
 
         {/* Przycisk do przełączania widoczności ikon */}

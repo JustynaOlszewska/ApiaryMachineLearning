@@ -13,7 +13,7 @@ const { Option } = Select;
 
 const LanguageSelector = () => {
   const [backgroundColorInInput, setBackgroundColorInInput] = useState(false);
-  const [model, setModel] = useState("en");
+  const [model, setModel] = useState("pl");
   const navigate = useNavigate();
   const { lang } = useParams();
 

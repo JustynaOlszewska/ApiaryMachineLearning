@@ -1,13 +1,18 @@
 /* existing imports */
 // import Root from "./routes/root";
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 const MainLayout = lazy(() => import("../pages/MainLayout"));
 const ApiariesList = lazy(() => import("../pages/ApiariesList"));
 const LoginForm = lazy(() => import("../pages/LoginForm"));
 const RegisterForm = lazy(() => import("../pages/RegisterForm"));
 import apiaryStore from "../stores/ApiaryStore";
+import BuildApiary from "../organism/BuildApiary";
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/pl" replace />, // Przekierowanie do domyślnego języka
+  },
   {
     path: "/:lang",
     // path: "/:lang",
@@ -113,6 +118,34 @@ const router = createBrowserRouter([
       //         },
       //       },
     ],
+  },
+  {
+    path: "/:lang/apiaries/:id/edit",
+    // name: "edit",
+    element: (
+      <Suspense fallback={<div>Ładowanie...</div>}>
+        <BuildApiary edit={true} />
+      </Suspense>
+    ),
+    // component: () => import("../components/pages/childrens/CreateApiary.vue"),
+    // props: (route) => {
+    //   const apiaryStore = useApiary();
+    //   const apiary = apiaryStore.dataApiary?.filter((apiary: ApiaryData) => apiary._id === route.params.id);
+    //   return { id: route.params.id, apiary };
+  },
+  {
+    path: "/:lang/apiaries/create",
+    // name: "edit",
+    element: (
+      <Suspense fallback={<div>Ładowanie...</div>}>
+        <BuildApiary />
+      </Suspense>
+    ),
+    // component: () => import("../components/pages/childrens/CreateApiary.vue"),
+    // props: (route) => {
+    //   const apiaryStore = useApiary();
+    //   const apiary = apiaryStore.dataApiary?.filter((apiary: ApiaryData) => apiary._id === route.params.id);
+    //   return { id: route.params.id, apiary };
   },
   // {
   //   path: "/about",

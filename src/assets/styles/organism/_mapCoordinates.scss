@@ -1,0 +1,40 @@
+.wrapper-coordinates {
+  margin: 10px;
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 2px;
+    text-align: center;
+    color: #31869b !important;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: "Open Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+    line-height: 1.3;
+  }
+  > div {
+    text-align: center;
+    color: #6666;
+  }
+  .wrapper-content {
+    border: 1px solid #aaa;
+    margin-bottom: 10px;
+    .border {
+      .ant-form-item {
+        margin-bottom: 10px;
+      }
+      label {
+        width: 10%;
+        margin: 5px;
+        align-items: center;
+        display: flex;
+      }
+    }
+    .map-margin {
+      margin: 10px;
+      width: auto !important;
+    }
+    .button-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

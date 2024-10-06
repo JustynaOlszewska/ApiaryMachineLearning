@@ -7,6 +7,7 @@ import { Pages } from "../interfaces/apiary"; // Zakładam, że masz ten enum
 import Icon from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../assets/styles/organism/_essentialLink.scss";
+import { Typography } from "antd";
 interface EssentialLinkProps {
   title: string;
   link: string;
@@ -71,6 +72,7 @@ const EssentialLink = observer(({ title, link, icon }: EssentialLinkProps) => {
         <Link to={`/${lang}/${link.link}`} onClick={() => setShow(!show)} className="text-link">
           <div className="icon-section">
             <FontAwesomeIcon icon={link.icon} />
+            <Typography.Text style={{ color: "white", paddingLeft: "20px" }}>{link.title}</Typography.Text>
           </div>
           <span className="navigation-description">{title}</span>
         </Link>
