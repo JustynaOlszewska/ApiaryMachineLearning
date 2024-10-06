@@ -1,3 +1,4 @@
 {
-  "Welcome to React": "Witam po polsku"
+  "Welcome to React": "Witam po polsku",
+  "apiaryList": { "chooseApiary": "Wybierz pasiekę" }
 }

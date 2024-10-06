@@ -11,14 +11,14 @@ import FormWrapperCreateApiary from "../organism/FormWrapperBuildApiary";
 export const PermissionContext = createContext<boolean | undefined>(undefined);
 
 interface CreateApiaryProps {
-  idApiary?: string;
+  idChosenApiary?: string;
   apiary?: string[];
   edit: boolean;
 }
 
-// const CreateApiary: React.FC<CreateApiaryProps> = ({ idApiary, apiary }) => {
+// const CreateApiary: React.FC<CreateApiaryProps> = ({ idChosenApiary, apiary }) => {
 const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
-  const { idApiary } = apiaryStore;
+  const { idChosenApiary } = apiaryStore;
   const navigate = useNavigate();
   const { lang } = useParams<{ lang: string }>();
   const [permissionToValidate, setPermissionToValidate] = useState(false);
@@ -44,7 +44,7 @@ const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
         <div className="createApiary">
           <div>
             <Button type="primary" htmlType="submit" form="myForm" onClick={handleSubmit} style={{ marginRight: "8px" }}>
-              {idApiary ? "Save" : "Create"}
+              {idChosenApiary ? "Save" : "Create"}
             </Button>
             <Button onClick={comeBackToApiariesList} type="text" style={{ background: "none", color: "#000000" }}>
               Cancel
@@ -53,7 +53,7 @@ const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
         </div>
         <div className="scrollArea">
           <Spin spinning={false}>
-            <FormWrapperCreateApiary apiary={apiary} id={idApiary} />
+            <FormWrapperCreateApiary apiary={apiary} id={idChosenApiary} />
           </Spin>
         </div>
       </div>

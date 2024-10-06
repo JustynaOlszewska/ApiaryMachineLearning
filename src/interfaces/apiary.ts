@@ -1,3 +1,22 @@
+//////nowe
+export interface Apiary {
+  address: string;
+  hives: string;
+  key: string;
+  name: string;
+  sun: number;
+  type: string;
+}
+
+export interface ApiaryElement {
+  value: string;
+  label: string;
+}
+
+export interface ApiariesData {
+  Apiary: Apiary[];
+}
+////////////////
 export interface DataChart {
   labels: Labels[] | null;
   datasets: Datasets[];

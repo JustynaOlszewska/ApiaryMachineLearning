@@ -1,17 +1,20 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { getAsync, postAsync, deleteAsync, putAsync } from "../asyncAxios";
 import i18n from "i18next";
-import { ApiaryData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
+import { ApiaryData, ApiaryElement, Apiary, ApiariesData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../src/firebase.js";
+import { map } from "lodash";
 // my-app\src\firebase.js
 import { faSignsPost, faCalendar, faBoxesStacked, faSignInAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 class ApiaryStore {
   [x: string]: any;
   counter = 0;
-  dataApiary = [];
-  idApiary: null | number | string = null;
+  dataApiaries = [];
+  selectedApiary: ApiaryElement | null = null;
+  apiariesList: ApiaryElement[] | [] = [];
+  idChosenApiary: null | number | string = null;
   dataChart = {
     labels: null,
     datasets: [
@@ -87,7 +90,9 @@ class ApiaryStore {
   setStatus(newStatus: any) {
     this.status[newStatus.key] = newStatus.value as any;
   }
-
+  setSelectedApiary = (selectedApiary: ApiaryElement) => {
+    this.selectedApiary = selectedApiary;
+  };
   async removeApiary(id: number) {
     const token = sessionStorage.getItem("token");
     const config = {
@@ -117,7 +122,15 @@ class ApiaryStore {
     }
     // }
   }
+  setApiarieslist = (apiariesList: ApiariesData[]) => {
+    console.log("1111111111", apiariesList);
 
+    map(apiariesList, (apiary: Apiary) => {
+      console.log("000000000000000000", this.apiariesList);
+      this.apiariesList = [...this.apiariesList, { value: apiary.key, label: apiary.name }];
+      console.log("000000000000000000111", this.apiariesList);
+    });
+  };
   async getInitApiaryData() {
     // const token = sessionStorage.getItem("token");
     // const config = {
@@ -132,7 +145,9 @@ class ApiaryStore {
       //   config,
       // });
       console.log("dddddddddddddddddd111", db);
-      this.dataApiary = [];
+      this.dataApiaries = [];
+      this.apiariesList = [];
+
       const querySnapshot = await getDocs(collection(db, "Apiaries"));
       // console.log("dddddddddddddddddd222", querySnapshot);
       querySnapshot.forEach((doc) => {
@@ -141,12 +156,14 @@ class ApiaryStore {
         if (doc.data()) {
           runInAction(() => {
             const data = doc.data();
-            this.dataApiary = [...this.dataApiary, data] as any;
+            this.dataApiaries = [...this.dataApiaries, data] as any;
             // this.setAllDataApiary(doc.data());
             this.loading = false;
           });
         }
       });
+      this.setApiarieslist(this.dataApiaries);
+
       // const citiesRef = collection(db, "Apiaries");
       // console.log("dddddddddddddddddd222", citiesRef, db);
 
@@ -243,9 +260,9 @@ class ApiaryStore {
     // data.forEach((el: any, index: number) => {
     //   el.index = index + 1;
     // });
-    this.dataApiary = data;
+    this.dataApiaries = data;
     this.setChartApiary(data);
-    sessionStorage.setItem("dataApiary", JSON.stringify(data));
+    sessionStorage.setItem("dataApiaries", JSON.stringify(data));
   }
 
   setChartApiary(data: any) {

@@ -5,12 +5,13 @@ import apiaryStore from "../stores/ApiaryStore"; // Import Store
 import { SearchOutlined, PlusOutlined, ReloadOutlined, ToolOutlined } from "@ant-design/icons";
 import { withNamespaces } from "react-i18next";
 
-import { cloneDeep } from "lodash";
-import "../assets/styles/pages/_apiariesList.scss";
+import { cloneDeep, filter } from "lodash";
+import "../assets/styles/main.scss";
 const { Option } = Select;
 import i18n from "../../src/i18n.js";
 import i18next from "i18next";
 import { Link } from "react-router-dom";
+import { ApiariesData, ApiaryElement } from "../interfaces/apiary";
 
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -32,12 +33,20 @@ interface ApiaryProps {
 const ApiaryTable = observer(({ t }: ApiaryProps) => {
   // const { i18n } = useTranslation();
 
-  const { dataApiary } = apiaryStore;
-  useEffect(() => {
-    // apiaryStore.getInitApiaryData();
-  }, []);
+  const { dataApiaries, apiariesList, selectedApiary, setSelectedApiary } = apiaryStore;
+
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
+  const [apiaries, setApiaries] = useState<ApiariesData[]>([]);
+
+  useEffect(() => {
+    setApiaries(() =>
+      filter(dataApiaries, (apiary: any) => {
+        return apiary.key !== selectedApiary;
+      })
+    );
+  }, [selectedApiary]);
+
   const columns: TableProps<DataType>["columns"] = [
     {
       // title: "Name",
@@ -122,7 +131,7 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
             <Link
               to={`/${i18next.language}/apiaries/${record.key}/edit`}
               onClick={() => {
-                apiaryStore.idApiary = record.key;
+                apiaryStore.idChosenApiary = record.key;
               }}>
               Edit
             </Link>
@@ -200,7 +209,9 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
   //       ),
   //   },
   // ];
-
+  const selectApiary = (apiary: ApiaryElement) => {
+    setSelectedApiary(apiary);
+  };
   return (
     <div>
       <div style={{ marginBottom: "16px", display: "flex", gap: "10px", paddingTop: "100px" }}>
@@ -209,22 +220,14 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
 
         {/* Dropdown z pasiekami */}
         {/* <Select style={{ width: 200 }} placeholder="Wybierz pasiekę" onChange={(value) => apiaryStore.selectApiary(value)}>
-          {apiaryStore.dataApiary.map((apiary: any) => (
+          {apiaryStore.dataApiaries.map((apiary: any) => (
             <Option key={apiary.id} value={apiary.id}>
               {apiary.name}
             </Option>
           ))}
         </Select> */}
         {/* odkomentuję to wyzejjak juz dane będa pochodizły z backendu */}
-        <Select
-          style={{ width: 200 }}
-          placeholder="Wybierz pasiekę"
-          onChange={(value) => apiaryStore.selectApiary(value)}
-          options={[
-            { value: "Pierzchały", label: "p" },
-            { value: "Kadyny", label: "k" },
-            { value: "Czechowo", label: "c" },
-          ]}></Select>
+        <Select style={{ width: 200 }} placeholder={t("apiaryList.chooseApiary")} onChange={(value) => selectApiary(value)} options={apiariesList}></Select>
 
         {/* Przycisk reset */}
         <Button onClick={apiaryStore.resetSelectedData} icon={<ReloadOutlined />}>
@@ -236,7 +239,7 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
           <Link
             to={`/${i18next.language}/apiaries/create`}
             onClick={() => {
-              apiaryStore.idApiary = null;
+              apiaryStore.idChosenApiary = null;
             }}>
             Dodaj Pasiekę
           </Link>
@@ -247,9 +250,9 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
           Pokaż Ikony
         </Button>
       </div>
-      <Table columns={columns} dataSource={dataApiary} />
+      <Table columns={columns} dataSource={apiaries} />
       {/* Tabela */}
-      {/* {apiaryStore.loading ? <Spin /> : <Table dataSource={cloneDeep(apiaryStore.dataApiary)} columns={columns} rowKey="id" />} */}
+      {/* {apiaryStore.loading ? <Spin /> : <Table dataSource={cloneDeep(apiaryStore.dataApiaries)} columns={columns} rowKey="id" />} */}
     </div>
   );
 });
