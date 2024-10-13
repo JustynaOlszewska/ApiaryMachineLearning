@@ -1,18 +1,23 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { getAsync, postAsync, deleteAsync, putAsync } from "../asyncAxios";
 import i18n from "i18next";
+import { v4 as uuidv4 } from "uuid";
 import { ApiaryData, ApiaryElement, Apiary, ApiariesData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../src/firebase.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 import { map } from "lodash";
+import authStore from "./AuthStore";
 // my-app\src\firebase.js
 import { faSignsPost, faCalendar, faBoxesStacked, faSignInAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 class ApiaryStore {
   [x: string]: any;
   counter = 0;
-  dataApiaries = [];
+  dataApiaries: Apiary[] | [] = [];
   selectedApiary: ApiaryElement | null = null;
+  editedApiary: ApiaryData | null = null;
   apiariesList: ApiaryElement[] | [] = [];
   idChosenApiary: null | number | string = null;
   dataChart = {
@@ -93,6 +98,45 @@ class ApiaryStore {
   setSelectedApiary = (selectedApiary: ApiaryElement) => {
     this.selectedApiary = selectedApiary;
   };
+  addApiary = async (newApiary: ApiaryData) => {
+    // db.collection("Apiaries")
+    //   .add(newApiary)
+    //   .then((docRef: { id: any }) => {
+    //     console.log("Document written with ID: ", docRef.id);
+    //   })
+    //   .catch((error: any) => {
+    //     console.error("Error adding document: ", error);
+    //   });
+    const id = uuidv4();
+    newApiary.id = id;
+    // db.collection(
+    try {
+      // const uid = await authStore.getUser();
+      const auth = getAuth();
+
+      // lastNotifiedUid
+      // :
+      // "rA9CvTztMRfsNivLL1ANVLMDTFz1"
+      console.log("Document written with ID: ", auth?.lastNotifiedUid);
+      const userId = auth?.lastNotifiedUid;
+      // Add a new document with a generated id.
+      // const userDocRef = collection(db, "Apiaries").doc(userId);
+      // const querySnapshot = await getDoc(collection(db, "Users"));
+      const docRef = doc(db, "Users", userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+      } else {
+        console.log("No such document!");
+
+        // docSnap.data() will be undefined in this case
+        const docRef = await addDoc(collection(db, "Users", userId, "Apiaries"), newApiary);
+        console.log("No such document!333", docRef);
+      }
+    } catch (error) {
+      console.log("Document written with ID: error", error);
+    }
+  };
   async removeApiary(id: number) {
     const token = sessionStorage.getItem("token");
     const config = {
@@ -122,12 +166,12 @@ class ApiaryStore {
     }
     // }
   }
-  setApiarieslist = (apiariesList: ApiariesData[]) => {
+  setApiarieslist = (apiariesList: Apiary[]) => {
     console.log("1111111111", apiariesList);
 
     map(apiariesList, (apiary: Apiary) => {
       console.log("000000000000000000", this.apiariesList);
-      this.apiariesList = [...this.apiariesList, { value: apiary.key, label: apiary.name }];
+      this.apiariesList = [...this.apiariesList, { value: apiary.id, label: apiary.name }];
       console.log("000000000000000000111", this.apiariesList);
     });
   };
@@ -144,11 +188,12 @@ class ApiaryStore {
       //   setStatus: this.setStatus.bind(this),
       //   config,
       // });
-      console.log("dddddddddddddddddd111", db);
-      this.dataApiaries = [];
-      this.apiariesList = [];
+      // this.dataApiaries = [];
+      // this.apiariesList = [];
+      const auth = getAuth();
+      const userId = auth?.lastNotifiedUid;
 
-      const querySnapshot = await getDocs(collection(db, "Apiaries"));
+      const querySnapshot = await getDocs(collection(db, "Users", userId, "Apiaries"));
       // console.log("dddddddddddddddddd222", querySnapshot);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -157,12 +202,15 @@ class ApiaryStore {
           runInAction(() => {
             const data = doc.data();
             this.dataApiaries = [...this.dataApiaries, data] as any;
+            console.log("dddddddddddddddddd111", this.dataApiaries);
+            this.setApiarieslist(this.dataApiaries);
+            this.editedApiary = null;
+
             // this.setAllDataApiary(doc.data());
             this.loading = false;
           });
         }
       });
-      this.setApiarieslist(this.dataApiaries);
 
       // const citiesRef = collection(db, "Apiaries");
       // console.log("dddddddddddddddddd222", citiesRef, db);
@@ -224,7 +272,47 @@ class ApiaryStore {
     }
     return true;
   }
+  // getApiary = async (id: string) => {
+  //   // db.collection("Apiaries")
+  //   //   .add(newApiary)
+  //   //   .then((docRef: { id: any }) => {
+  //   //     console.log("Document written with ID: ", docRef.id);
+  //   //   })
+  //   //   .catch((error: any) => {
+  //   //     console.error("Error adding document: ", error);
+  //   //   });
+  //   // const id = uuidv4();
+  //   // newApiary.id = id;
+  //   // db.collection(
+  //   try {
+  //     // const uid = await authStore.getUser();
+  //     const auth = getAuth();
 
+  //     // lastNotifiedUid
+  //     // :
+  //     // "rA9CvTztMRfsNivLL1ANVLMDTFz1"
+  //     console.log("Document written with ID: getApiary", id);
+  //     const userId = auth?.lastNotifiedUid;
+  //     // Add a new document with a generated id.
+  //     // const userDocRef = collection(db, "Apiaries").doc(userId);
+  //     // const querySnapshot = await getDoc(collection(db, "Users"));
+  //     // const docSnap = await getDoc(collection(db, "Users", userId, "Apiaries"));
+
+  //     const docRef = doc(db, "Users", userId, "Apiaries", id); // specificApiaryId musi być identyfikatorem dokumentu
+
+  //     // Pobierz dokument
+  //     const docSnap = await getDoc(docRef);
+
+  //     if (docSnap.exists()) {
+  //       console.log("Document data:", docSnap.data());
+  //       this.editedApiary = docSnap.data();
+  //     } else {
+  //       console.log("No such document!");
+  //     }
+  //   } catch (error) {
+  //     console.log("Document written with ID: error", error);
+  //   }
+  // };
   async updateApiaryData(data: any, id: number) {
     const token = sessionStorage.getItem("token");
     const config = {
@@ -256,14 +344,14 @@ class ApiaryStore {
     return true;
   }
 
-  setAllDataApiary(data: any) {
-    // data.forEach((el: any, index: number) => {
-    //   el.index = index + 1;
-    // });
-    this.dataApiaries = data;
-    this.setChartApiary(data);
-    sessionStorage.setItem("dataApiaries", JSON.stringify(data));
-  }
+  // setAllDataApiary(data: any) {
+  //   // data.forEach((el: any, index: number) => {
+  //   //   el.index = index + 1;
+  //   // });
+  //   this.dataApiaries = data;
+  //   this.setChartApiary(data);
+  //   sessionStorage.setItem("dataApiaries", JSON.stringify(data));
+  // }
 
   setChartApiary(data: any) {
     const uniqueRowsChart = [...new Set(data.map((el: any) => el.type))];

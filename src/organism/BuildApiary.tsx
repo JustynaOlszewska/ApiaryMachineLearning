@@ -13,12 +13,12 @@ export const PermissionContext = createContext<boolean | undefined>(undefined);
 interface CreateApiaryProps {
   idChosenApiary?: string;
   apiary?: string[];
-  edit: boolean;
+  edit?: boolean;
 }
 
 // const CreateApiary: React.FC<CreateApiaryProps> = ({ idChosenApiary, apiary }) => {
 const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
-  const { idChosenApiary } = apiaryStore;
+  const { idChosenApiary, editedApiary } = apiaryStore;
   const navigate = useNavigate();
   const { lang } = useParams<{ lang: string }>();
   const [permissionToValidate, setPermissionToValidate] = useState(false);
@@ -53,7 +53,7 @@ const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
         </div>
         <div className="scrollArea">
           <Spin spinning={false}>
-            <FormWrapperCreateApiary apiary={apiary} id={idChosenApiary} />
+            <FormWrapperCreateApiary id={idChosenApiary} editedApiary={editedApiary} />
           </Spin>
         </div>
       </div>

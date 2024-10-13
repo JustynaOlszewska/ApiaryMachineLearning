@@ -1,5 +1,6 @@
 //////nowe
 export interface Apiary {
+  id: string;
   address: string;
   hives: string;
   key: string;
@@ -13,9 +14,6 @@ export interface ApiaryElement {
   label: string;
 }
 
-export interface ApiariesData {
-  Apiary: Apiary[];
-}
 ////////////////
 export interface DataChart {
   labels: Labels[] | null;
@@ -45,7 +43,7 @@ export interface ApiaryData {
   calories: number;
   fat: number;
   hives: number;
-  id: number;
+  id: string;
   iron: string;
   name: string;
   protein: number;

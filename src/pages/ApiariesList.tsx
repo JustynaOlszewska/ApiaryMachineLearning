@@ -3,7 +3,7 @@ import { Table, Input, Button, Select, Spin, Space, Tag, TableProps } from "antd
 import { observer } from "mobx-react-lite";
 import apiaryStore from "../stores/ApiaryStore"; // Import Store
 import { SearchOutlined, PlusOutlined, ReloadOutlined, ToolOutlined } from "@ant-design/icons";
-import { withNamespaces } from "react-i18next";
+import { useTranslation, withNamespaces } from "react-i18next";
 
 import { cloneDeep, filter } from "lodash";
 import "../assets/styles/main.scss";
@@ -11,7 +11,7 @@ const { Option } = Select;
 import i18n from "../../src/i18n.js";
 import i18next from "i18next";
 import { Link } from "react-router-dom";
-import { ApiariesData, ApiaryElement } from "../interfaces/apiary";
+import { ApiariesData, Apiary, ApiaryElement } from "../interfaces/apiary";
 
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -30,22 +30,37 @@ interface DataType {
 interface ApiaryProps {
   t: any;
 }
-const ApiaryTable = observer(({ t }: ApiaryProps) => {
-  // const { i18n } = useTranslation();
+const ApiaryTable = observer(() => {
+  const { t } = useTranslation();
 
   const { dataApiaries, apiariesList, selectedApiary, setSelectedApiary } = apiaryStore;
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
   const [apiaries, setApiaries] = useState<ApiariesData[]>([]);
+  const [filteredValue, setFilteredValue] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setApiaries(() =>
-      filter(dataApiaries, (apiary: any) => {
-        return apiary.key !== selectedApiary;
-      })
-    );
-  }, [selectedApiary]);
+    console.log("dataApiary", dataApiaries);
+    // if (selectedApiary || filteredValue) {
+    // if (!dataApiaries.length) {
+    //   setLoading(true);
+    // }
+    setApiaries(() => {
+      const r = filter(dataApiaries, (apiary: Apiary) => {
+        console.log("apiaryyyyyy", apiary.id, selectedApiary, apiary.id === selectedApiary);
+        return apiary.id === selectedApiary || !selectedApiary;
+      });
+      // console.log("apiaryrrrrrrr", r);
+      // setLoading(false);
+      // return r;
+      return filter(r, (y) => {
+        return y.name.includes(filteredValue);
+      });
+    });
+    // }
+  }, [selectedApiary, filteredValue, dataApiaries]);
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -126,12 +141,13 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
         console.log("record", record);
         return (
           <Space size="middle">
-            <a>Invite {record.name}</a>
+            {/* <a>Invite {record.name}</a> */}
             <a>Delete</a>
             <Link
-              to={`/${i18next.language}/apiaries/${record.key}/edit`}
+              to={`/${i18next.language}/apiaries/${record.id}/edit`}
               onClick={() => {
                 apiaryStore.idChosenApiary = record.key;
+                apiaryStore.editedApiary = record;
               }}>
               Edit
             </Link>
@@ -212,11 +228,20 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
   const selectApiary = (apiary: ApiaryElement) => {
     setSelectedApiary(apiary);
   };
+  const setFilter = (value: string) => {
+    setFilteredValue(value);
+    // setFilteredList(() => {
+    //   return filter(apiaries, (apiary) => {
+    //     return apiary.name.includes(value);
+    //   });
+    // });
+  };
   return (
     <div>
       <div style={{ marginBottom: "16px", display: "flex", gap: "10px", paddingTop: "100px" }}>
         {/* Pole do wyszukiwania */}
-        <Input placeholder="Szukaj" value={apiaryStore.filter} onChange={(e) => apiaryStore.setFilter(e.target.value)} prefix={<SearchOutlined />} style={{ width: "200px" }} />
+        {/* value={apiaryStore.filter}  */}
+        <Input placeholder="Szukaj" value={filteredValue} onChange={(e) => setFilter(e.target.value)} prefix={<SearchOutlined />} style={{ width: "200px" }} />
 
         {/* Dropdown z pasiekami */}
         {/* <Select style={{ width: 200 }} placeholder="Wybierz pasiekę" onChange={(value) => apiaryStore.selectApiary(value)}>
@@ -227,7 +252,7 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
           ))}
         </Select> */}
         {/* odkomentuję to wyzejjak juz dane będa pochodizły z backendu */}
-        <Select style={{ width: 200 }} placeholder={t("apiaryList.chooseApiary")} onChange={(value) => selectApiary(value)} options={apiariesList}></Select>
+        <Select allowClear style={{ width: 200 }} placeholder={t("apiaryList.chooseApiary")} onChange={(value) => selectApiary(value)} options={apiariesList}></Select>
 
         {/* Przycisk reset */}
         <Button onClick={apiaryStore.resetSelectedData} icon={<ReloadOutlined />}>
@@ -250,11 +275,11 @@ const ApiaryTable = observer(({ t }: ApiaryProps) => {
           Pokaż Ikony
         </Button>
       </div>
-      <Table columns={columns} dataSource={apiaries} />
+      <Table columns={columns} dataSource={apiaries} loading={loading} />
       {/* Tabela */}
       {/* {apiaryStore.loading ? <Spin /> : <Table dataSource={cloneDeep(apiaryStore.dataApiaries)} columns={columns} rowKey="id" />} */}
     </div>
   );
 });
 
-export default withNamespaces()(ApiaryTable);
+export default ApiaryTable;

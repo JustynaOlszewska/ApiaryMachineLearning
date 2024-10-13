@@ -1,5 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import axios from "axios";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 // import { setToken } from "../utils/setToken";
 
 class AuthStore {
@@ -16,7 +18,23 @@ class AuthStore {
   get doubleCount() {
     return this.counter * 2;
   }
-
+  getUser = async () => {
+    try {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Użytkownik jest zalogowany
+          const uid = user.uid;
+          return uid;
+          console.log("ID użytkownika:", uid);
+        } else {
+          // Użytkownik nie jest zalogowany
+        }
+      });
+    } catch (error) {
+      console.log("ID użytkownika:error", error);
+    }
+  };
   // Akcja logowania użytkownika
   async loginUser(dataUser) {
     const config = { headers: { "Content-Type": "application/json" } };
