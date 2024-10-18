@@ -15,9 +15,11 @@ const ClickableMap = ({ onClick, coordinates }) => {
   };
 
   return (
-    <LeafletMap center={coordinates || [51.505, -0.09]} zoom={13} className="map-margin" style={{ height: "400px", width: "100%" }}>
-      <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {coordinates && <Marker position={coordinates} />}
+    // className="map-margin"
+    <LeafletMap center={coordinates || [51.505, -0.09]} zoom={10} style={{ height: "400px", width: "100%" }}>
+      <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {/* <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /> */}
+      {/* {coordinates && <Marker position={coordinates} />} */}
       <MapEvents />
     </LeafletMap>
   );

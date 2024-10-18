@@ -138,14 +138,21 @@ const ApiaryTable = observer(() => {
           key: number | string;
         }
       ) => {
-        console.log("record", record);
         return (
           <Space size="middle">
             {/* <a>Invite {record.name}</a> */}
-            <a>Delete</a>
+            <Button
+              onClick={() => {
+                apiaryStore.deleteApiary(record.identifier);
+                apiaryStore.getInitApiaryData();
+              }}>
+              Delete
+            </Button>
             <Link
               to={`/${i18next.language}/apiaries/${record.id}/edit`}
               onClick={() => {
+                console.log("record", record);
+
                 apiaryStore.idChosenApiary = record.key;
                 apiaryStore.editedApiary = record;
               }}>
@@ -252,10 +259,16 @@ const ApiaryTable = observer(() => {
           ))}
         </Select> */}
         {/* odkomentuję to wyzejjak juz dane będa pochodizły z backendu */}
-        <Select allowClear style={{ width: 200 }} placeholder={t("apiaryList.chooseApiary")} onChange={(value) => selectApiary(value)} options={apiariesList}></Select>
+        <Select allowClear style={{ width: 200 }} placeholder={t("apiaryList.chooseApiary")} onChange={(value) => selectApiary(value)} options={apiariesList} value={selectedApiary}></Select>
 
         {/* Przycisk reset */}
-        <Button onClick={apiaryStore.resetSelectedData} icon={<ReloadOutlined />}>
+        <Button
+          onClick={() => {
+            setFilteredValue("");
+            selectApiary(null);
+            apiaryStore.resetSelectedData;
+          }}
+          icon={<ReloadOutlined />}>
           Reset
         </Button>
 
@@ -265,6 +278,7 @@ const ApiaryTable = observer(() => {
             to={`/${i18next.language}/apiaries/create`}
             onClick={() => {
               apiaryStore.idChosenApiary = null;
+              apiaryStore.editedApiary = null;
             }}>
             Dodaj Pasiekę
           </Link>

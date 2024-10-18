@@ -4,7 +4,7 @@ import i18n from "i18next";
 import { v4 as uuidv4 } from "uuid";
 import { ApiaryData, ApiaryElement, Apiary, ApiariesData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../src/firebase.js";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -166,9 +166,22 @@ class ApiaryStore {
     }
     // }
   }
+  deleteApiary = async (idApiary: any) => {
+    try {
+      const auth = getAuth();
+
+      const userId = auth?.currentUser.uid;
+
+      const y = await deleteDoc(doc(db, "Users", userId, "Apiaries", idApiary));
+
+      console.log("tttttttttttttttt", userId, idApiary, auth, y, this.dataApiaries);
+    } catch (error) {
+      console.log("errror", error);
+    }
+  };
   setApiarieslist = (apiariesList: Apiary[]) => {
     console.log("1111111111", apiariesList);
-
+    this.apiariesList = [];
     map(apiariesList, (apiary: Apiary) => {
       console.log("000000000000000000", this.apiariesList);
       this.apiariesList = [...this.apiariesList, { value: apiary.id, label: apiary.name }];
@@ -190,6 +203,7 @@ class ApiaryStore {
       // });
       // this.dataApiaries = [];
       // this.apiariesList = [];
+      this.dataApiaries = [];
       const auth = getAuth();
       const userId = auth?.lastNotifiedUid;
 
@@ -201,6 +215,7 @@ class ApiaryStore {
         if (doc.data()) {
           runInAction(() => {
             const data = doc.data();
+            data.identifier = doc.id;
             this.dataApiaries = [...this.dataApiaries, data] as any;
             console.log("dddddddddddddddddd111", this.dataApiaries);
             this.setApiarieslist(this.dataApiaries);
@@ -241,7 +256,18 @@ class ApiaryStore {
     //   });
     // }
   }
+  updateApiaryData = async (apiary: any) => {
+    try {
+      const cleanApiary = Object.fromEntries(Object.entries(apiary).filter(([key, value]) => value));
 
+      const auth = getAuth();
+
+      const userId = auth?.currentUser.uid;
+      console.log("yyyyyyyyyyyyyyyyyyyyyyy", apiary.identifier, cleanApiary);
+
+      const y = await updateDoc(doc(db, "Users", userId, "Apiaries", apiary.identifier), cleanApiary);
+    } catch (error) {}
+  };
   async addApiaryData(data: any) {
     const token = sessionStorage.getItem("token");
     const config = {
@@ -313,36 +339,36 @@ class ApiaryStore {
   //     console.log("Document written with ID: error", error);
   //   }
   // };
-  async updateApiaryData(data: any, id: number) {
-    const token = sessionStorage.getItem("token");
-    const config = {
-      headers: { "x-auth-token": token },
-    };
+  // async updateApiaryData(data: any, id: number) {
+  //   const token = sessionStorage.getItem("token");
+  //   const config = {
+  //     headers: { "x-auth-token": token },
+  //   };
 
-    if (token) {
-      try {
-        this.loading = true;
-        const r = await putAsync({
-          url: `http://localhost:5000/api/apiary/rows/${id}`,
-          payload: data,
-          setStatus: this.setStatus.bind(this),
-          config,
-        });
+  //   if (token) {
+  //     try {
+  //       this.loading = true;
+  //       const r = await putAsync({
+  //         url: `http://localhost:5000/api/apiary/rows/${id}`,
+  //         payload: data,
+  //         setStatus: this.setStatus.bind(this),
+  //         config,
+  //       });
 
-        if (r) {
-          runInAction(() => {
-            this.loading = false;
-          });
-        }
-      } catch (error) {
-        runInAction(() => {
-          this.loading = false;
-        });
-        console.error("Error updating apiary:", error);
-      }
-    }
-    return true;
-  }
+  //       if (r) {
+  //         runInAction(() => {
+  //           this.loading = false;
+  //         });
+  //       }
+  //     } catch (error) {
+  //       runInAction(() => {
+  //         this.loading = false;
+  //       });
+  //       console.error("Error updating apiary:", error);
+  //     }
+  //   }
+  //   return true;
+  // }
 
   // setAllDataApiary(data: any) {
   //   // data.forEach((el: any, index: number) => {

@@ -17,12 +17,13 @@ interface FormWrapperBuildApiaryProps {
   id: number;
   t: any;
   editedApiary?: Apiary;
+  form: any;
 }
-const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary }) => {
+const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }) => {
   const { t } = useTranslation();
   // const history = useHistory();
   const { addApiary, apiariesList, selectedApiary, dataApiaries } = apiaryStore;
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [lat, setLat] = useState(null);
@@ -74,32 +75,32 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary }) => {
     };
   }, []);
 
-  const onSubmit = async (data: ApiaryData) => {
-    await addApiary(data);
-    console.log("data", data);
-    // const formData = {
-    //   lat,
-    //   lng,
-    //   hives,
-    //   country,
-    //   city,
-    //   zip,
-    //   address,
-    //   name,
-    //   forages,
-    //   type,
-    //   sun,
-    //   description,
-    // };
+  // const onSubmit = async (data: ApiaryData) => {
+  //   await addApiary(data);
+  //   console.log("data", data);
+  //   // const formData = {
+  //   //   lat,
+  //   //   lng,
+  //   //   hives,
+  //   //   country,
+  //   //   city,
+  //   //   zip,
+  //   //   address,
+  //   //   name,
+  //   //   forages,
+  //   //   type,
+  //   //   sun,
+  //   //   description,
+  //   // };
 
-    // Replace the following with your actual API calls
-    // const dataSended = apiary.length ? await apiaryStore.updateApiaryData(formData, id) : await apiaryStore.addApiaryData(formData);
+  //   // Replace the following with your actual API calls
+  //   // const dataSended = apiary.length ? await apiaryStore.updateApiaryData(formData, id) : await apiaryStore.addApiaryData(formData);
 
-    // if (dataSended) {
-    //   history.push(`/${sessionStorage.getItem("currentLang")?.toLowerCase()}/apiaries`);
-    //   onReset();
-    // }
-  };
+  //   // if (dataSended) {
+  //   //   history.push(`/${sessionStorage.getItem("currentLang")?.toLowerCase()}/apiaries`);
+  //   //   onReset();
+  //   // }
+  // };
 
   const onReset = () => {
     setLat(null);
@@ -125,78 +126,78 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary }) => {
 
   return (
     <div>
-      <Form form={form} onFinish={onSubmit} onReset={onReset} className="form-wrapper-create-apiary">
-        <h2>{t("formHeaders.general")}</h2>
-        <div className="border">
-          <div>
-            <Form.Item label="Name" name="name" initialValue={editedApiary?.name}>
-              <Input placeholder="Enter apiary name." value={name} onChange={(e) => setName(e.target.value)} />
-            </Form.Item>
+      {/* <Form form={form} onFinish={onSubmit} onReset={onReset} className="form-wrapper-create-apiary"> */}
+      <h2>{t("formHeaders.general")}</h2>
+      <div className="border">
+        <div>
+          <Form.Item label="Name" name="name" initialValue={editedApiary?.name}>
+            <Input placeholder="Enter apiary name." value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Item>
 
-            <Form.Item label="Forages" name="forages" initialValue={editedApiary?.forages}>
-              {/* <Select placeholder="Select forages." options={foragesOptions} value={forages} onChange={(value) => setForages(value)} /> */}
-              <Select placeholder="Select forages." mode="tags" onChange={(value) => setForages(value)} tokenSeparators={[","]} options={foragesOptions} />
-            </Form.Item>
+          <Form.Item label="Forages" name="forages" initialValue={editedApiary?.forages}>
+            {/* <Select placeholder="Select forages." options={foragesOptions} value={forages} onChange={(value) => setForages(value)} /> */}
+            <Select placeholder="Select forages." mode="tags" onChange={(value) => setForages(value)} tokenSeparators={[","]} options={foragesOptions} />
+          </Form.Item>
 
-            <Form.Item label="Type" name="type" initialValue={editedApiary?.type}>
-              <Select placeholder="Select type." options={typeOptions} value={type} onChange={(value) => setType(value)} />
-            </Form.Item>
+          <Form.Item label="Type" name="type" initialValue={editedApiary?.type}>
+            <Select placeholder="Select type." options={typeOptions} value={type} onChange={(value) => setType(value)} />
+          </Form.Item>
 
-            <Form.Item label="Sun Exposure" name="sun" initialValue={editedApiary?.sun}>
-              <Select placeholder="Select sun exposure." options={sunOptions} value={sun} onChange={(value) => setSun(value)} />
-            </Form.Item>
+          <Form.Item label="Sun Exposure" name="sun" initialValue={editedApiary?.sun}>
+            <Select placeholder="Select sun exposure." options={sunOptions} value={sun} onChange={(value) => setSun(value)} />
+          </Form.Item>
 
-            <Form.Item label="Hives" name="hives" initialValue={editedApiary?.hives}>
-              <InputNumber placeholder="Number of hives." value={hives} onChange={(value) => setHives(value)} />
-            </Form.Item>
+          <Form.Item label="Hives" name="hives" initialValue={editedApiary?.hives}>
+            <InputNumber placeholder="Number of hives." value={hives} onChange={(value) => setHives(value)} />
+          </Form.Item>
 
-            <Form.Item label="Description" name="description" initialValue={editedApiary?.description}>
-              <TextArea placeholder="Enter description." value={description} onChange={(e) => setDescription(e.target.value)} />
-            </Form.Item>
-          </div>
+          <Form.Item label="Description" name="description" initialValue={editedApiary?.description}>
+            <TextArea placeholder="Enter description." value={description} onChange={(e) => setDescription(e.target.value)} />
+          </Form.Item>
         </div>
+      </div>
 
-        <h2>{t("formHeaders.address")}</h2>
-        <div className="border">
-          <div>
-            <Form.Item label="Address" name="address" initialValue={editedApiary?.address}>
-              <Input placeholder="Enter address." value={address} onChange={(e) => setAddress(e.target.value)} />
-            </Form.Item>
+      <h2>{t("formHeaders.address")}</h2>
+      <div className="border">
+        <div>
+          <Form.Item label="Address" name="address" initialValue={editedApiary?.address}>
+            <Input placeholder="Enter address." value={address} onChange={(e) => setAddress(e.target.value)} />
+          </Form.Item>
 
-            <Form.Item label="Zip" name="zip" initialValue={editedApiary?.zip}>
-              <Input placeholder="Enter zip code." value={zip} onChange={(e) => setZip(e.target.value)} />
-            </Form.Item>
+          <Form.Item label="Zip" name="zip" initialValue={editedApiary?.zip}>
+            <Input placeholder="Enter zip code." value={zip} onChange={(e) => setZip(e.target.value)} />
+          </Form.Item>
 
-            <Form.Item label="City" name="city" initialValue={editedApiary?.city}>
-              <Input placeholder="Enter city." value={city} onChange={(e) => setCity(e.target.value)} />
-            </Form.Item>
+          <Form.Item label="City" name="city" initialValue={editedApiary?.city}>
+            <Input placeholder="Enter city." value={city} onChange={(e) => setCity(e.target.value)} />
+          </Form.Item>
 
-            <Form.Item label="Country" name="country" initialValue={editedApiary?.country}>
-              <Input placeholder="Enter country." value={country} onChange={(e) => setCountry(e.target.value)} />
-            </Form.Item>
-          </div>
+          <Form.Item label="Country" name="country" initialValue={editedApiary?.country}>
+            <Input placeholder="Enter country." value={country} onChange={(e) => setCountry(e.target.value)} />
+          </Form.Item>
         </div>
+      </div>
 
-        <h2>{t("formHeaders.mapCoordinates")}</h2>
-        <div className="border">
-          <div>
-            <Form.Item label="Latitude" name="lat" initialValue={editedApiary?.lat}>
-              <InputNumber placeholder="Enter latitude." value={lat} onChange={(value) => setLat(value)} addonAfter={<CloseOutlined onClick={() => setLat(null)} />} />
-            </Form.Item>
+      <h2>{t("formHeaders.mapCoordinates")}</h2>
+      <div className="border">
+        <div>
+          <Form.Item label="Latitude" name="lat" initialValue={editedApiary?.lat}>
+            <InputNumber placeholder="Enter latitude." value={lat} onChange={(value) => setLat(value)} addonAfter={<CloseOutlined onClick={() => setLat(null)} />} />
+          </Form.Item>
 
-            <Form.Item label="Longitude" name="lng" initialValue={editedApiary?.lng}>
-              <InputNumber placeholder="Enter longitude." value={lng} onChange={(value) => setLng(value)} addonAfter={<CloseOutlined onClick={() => setLng(null)} />} />
-            </Form.Item>
-          </div>
+          <Form.Item label="Longitude" name="lng" initialValue={editedApiary?.lng}>
+            <InputNumber placeholder="Enter longitude." value={lng} onChange={(value) => setLng(value)} addonAfter={<CloseOutlined onClick={() => setLng(null)} />} />
+          </Form.Item>
         </div>
+      </div>
 
-        <Form.Item className="form-buttons">
+      {/* <Form.Item className="form-buttons">
           <Button type="primary" htmlType="submit">
             {t("Submit")}
           </Button>
           <Button htmlType="reset">{t("Reset")}</Button>
-        </Form.Item>
-      </Form>
+        </Form.Item> */}
+      {/* </Form> */}
 
       <div className="create-apiary-buttons">
         <Button
