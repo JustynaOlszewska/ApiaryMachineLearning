@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, InputNumber, Button, Select, Modal } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import { withNamespaces } from "react-i18next";
 
 // import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -26,6 +25,8 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
   // const [form] = Form.useForm();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [isReadyToGetCoordinate, setReadyToGetCoordinate] = useState(false);
+
   const [lat, setLat] = useState(null);
   const [lng, setLng] = useState(null);
   const [country, setCountry] = useState(null);
@@ -119,9 +120,12 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
   };
 
   const setCoordinates = (coordinates) => {
-    const { lat: latitude, lng: longitude } = coordinates;
-    setLat(latitude);
-    setLng(longitude);
+    console.log("coordinates", coordinates);
+    // const { lat: latitude, lng: longitude } = coordinates;
+    setLat(() => coordinates.lat);
+    setLng(() => coordinates.lng || coordinates.lon);
+    form.setFieldsValue({ lat: coordinates.lat, lng: coordinates.lng || coordinates.lon });
+    setModalVisible(false);
   };
 
   return (
@@ -181,9 +185,11 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
       <h2>{t("formHeaders.mapCoordinates")}</h2>
       <div className="border">
         <div>
+          <div>{lat}</div>
           <Form.Item label="Latitude" name="lat" initialValue={editedApiary?.lat}>
             <InputNumber placeholder="Enter latitude." value={lat} onChange={(value) => setLat(value)} addonAfter={<CloseOutlined onClick={() => setLat(null)} />} />
           </Form.Item>
+          <div>{lng}</div>
 
           <Form.Item label="Longitude" name="lng" initialValue={editedApiary?.lng}>
             <InputNumber placeholder="Enter longitude." value={lng} onChange={(value) => setLng(value)} addonAfter={<CloseOutlined onClick={() => setLng(null)} />} />
@@ -202,7 +208,23 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
       <div className="create-apiary-buttons">
         <Button
           icon={<img src="../../assets/images/icons8-arrow-50.png" alt="Get coordinates" />}
-          onClick={() => {
+          onClick={async () => {
+            // fetch(`https://nominatim.openstreetmap.org/search?country=${countryName}&format=json`)
+            if (city && country) {
+              const cityName = encodeURIComponent(city);
+              const countryName = encodeURIComponent(country);
+
+              fetch(`https://nominatim.openstreetmap.org/search?city=${cityName}&country=${countryName}&format=json`)
+                .then((response) => response.json())
+                .then((data) => {
+                  const { lat, lon } = data[0];
+                  setCoordinates(data[0]);
+                  console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+                });
+            } else {
+              setReadyToGetCoordinate(true);
+            }
+
             /* Implement getCoordinates functionality */
           }}>
           {t("Get coordinates")}
@@ -213,7 +235,11 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
       </div>
 
       <Modal visible={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
-        <ModalHeaderContent setCoordinates={setCoordinates} />
+        <ModalHeaderContent setCoordinates={(coordinates) => setCoordinates(coordinates)} />
+      </Modal>
+      <Modal visible={isReadyToGetCoordinate && (!city || !country)} onCancel={() => setReadyToGetCoordinate(false)} footer={null}>
+        <div>No country and city</div>
+        {/* <ModalHeaderContent setCoordinates={(coordinates) => setCoordinates(coordinates)} /> */}
       </Modal>
     </div>
   );

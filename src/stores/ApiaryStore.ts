@@ -263,10 +263,12 @@ class ApiaryStore {
       const auth = getAuth();
 
       const userId = auth?.currentUser.uid;
-      console.log("yyyyyyyyyyyyyyyyyyyyyyy", apiary.identifier, cleanApiary);
+      console.log("yyyyyyyyyyyyyyyyyyyyyyy", apiary.identifier, cleanApiary, userId);
 
       const y = await updateDoc(doc(db, "Users", userId, "Apiaries", apiary.identifier), cleanApiary);
-    } catch (error) {}
+    } catch (error) {
+      console.log("yyyyyyyyyyyyyyyyyyyyyyyerror", error);
+    }
   };
   async addApiaryData(data: any) {
     const token = sessionStorage.getItem("token");

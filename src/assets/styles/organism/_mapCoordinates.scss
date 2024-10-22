@@ -1,40 +1,69 @@
-.wrapper-coordinates {
-  margin: 10px;
-  h2 {
-    margin-top: 20px;
-    margin-bottom: 2px;
-    text-align: center;
-    color: #31869b !important;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: "Open Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-    line-height: 1.3;
-  }
-  > div {
-    text-align: center;
-    color: #6666;
-  }
-  .wrapper-content {
-    border: 1px solid #aaa;
-    margin-bottom: 10px;
-    .border {
-      .ant-form-item {
-        margin-bottom: 10px;
-      }
-      label {
-        width: 10%;
-        margin: 5px;
-        align-items: center;
-        display: flex;
-      }
-    }
-    .map-margin {
-      margin: 10px;
-      width: auto !important;
-    }
-    .button-wrapper {
-      display: flex;
-      justify-content: center;
-    }
-  }
+// .wrapper-coordinates {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   width: 100%;
+//   height: 100%; /* This makes sure the map container uses the full height of the parent */
+//   overflow: hidden; /* Prevent any overflow of the map */
+// }
+
+.wrapper-content {
+  width: 100%; /* Ensures that the map and form elements are full width */
+  margin: 0; /* Reset any margins */
+  padding: 0;
 }
+
+.border {
+  width: 100%; /* Full width for the form */
+  margin-bottom: 1rem; /* Just a small margin for separation */
+}
+
+// .map-container {
+//   width: 100%;
+//   height: 400px; /* Ensure the map has a defined height */
+//   margin: 0; /* No extra margins */
+//   padding: 0;
+//   position: relative;
+//   overflow: hidden; /* Prevent map from overflowing */
+// }
+// .map-container {
+//   width: 100%;
+//   height: 400px;
+//   position: relative;
+//   overflow: hidden;
+//   display: block; /* Ensure it's block-level to take up full width */
+// }
+.wrapper-coordinates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.map-container {
+  width: 100%;
+  height: 400px; /* Ensure the map container has a defined height */
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 auto; /* Center the map */
+}
+// .leaflet-container .leaflet-marker-pane img,
+// .leaflet-container .leaflet-shadow-pane img,
+// .leaflet-container .leaflet-tile-pane img,
+// .leaflet-container img.leaflet-image-layer,
+// .leaflet-container .leaflet-tile {
+//   width: 100% !important;
+//   height: 100% !important;
+//   margin: 0 auto; /* Center the map */
+// }
