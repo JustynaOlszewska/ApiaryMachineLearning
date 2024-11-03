@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Select, Spin, Space, Tag, TableProps } from "antd";
+import { Table, Input, Button, Select, Space, TableProps, Flex } from "antd";
 import { observer } from "mobx-react-lite";
 import apiaryStore from "../stores/ApiaryStore"; // Import Store
 import { SearchOutlined, PlusOutlined, ReloadOutlined, ToolOutlined } from "@ant-design/icons";
-import { useTranslation, withNamespaces } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-import { cloneDeep, filter } from "lodash";
+import { filter } from "lodash";
 import "../assets/styles/main.scss";
-const { Option } = Select;
-import i18n from "../../src/i18n.js";
+// import i18n from "../../src/i18n.js";
 import i18next from "i18next";
 import { Link } from "react-router-dom";
-import { ApiariesData, Apiary, ApiaryElement } from "../interfaces/apiary";
+import { Apiary, ApiaryElement, ApiaryData } from "../interfaces/apiary";
 
 type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -37,45 +36,37 @@ const ApiaryTable = observer(() => {
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
-  const [apiaries, setApiaries] = useState<ApiariesData[]>([]);
+  const [apiaries, setApiaries] = useState<ApiaryData[]>([]);
   const [filteredValue, setFilteredValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("dataApiary", dataApiaries);
-    // if (selectedApiary || filteredValue) {
-    // if (!dataApiaries.length) {
-    //   setLoading(true);
-    // }
     setApiaries(() => {
       const r = filter(dataApiaries, (apiary: Apiary) => {
-        console.log("apiaryyyyyy", apiary.id, selectedApiary, apiary.id === selectedApiary);
+        // console.log("apiaryyyyyy", apiary.id, selectedApiary, apiary.id === selectedApiary);
         return apiary.id === selectedApiary || !selectedApiary;
       });
-      // console.log("apiaryrrrrrrr", r);
-      // setLoading(false);
-      // return r;
       return filter(r, (y) => {
         return y.name.includes(filteredValue);
       });
     });
-    // }
   }, [selectedApiary, filteredValue, dataApiaries]);
 
   const columns: TableProps<DataType>["columns"] = [
     {
-      // title: "Name",
-      title: <h1>{t("Welcome to React")}</h1>,
+      // title: <h1>{t("Welcome to React")}</h1>,
+      title: <h1>Name</h1>,
+
       dataIndex: "name",
       key: "name",
-      filters: [
-        { text: "London", value: "London" },
-        { text: "New York", value: "New York" },
-      ],
-      filteredValue: filteredInfo.address || null,
-      onFilter: (value, record) => record.address.includes(value as string),
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+      // filters: [
+      //   { text: "London", value: "London" },
+      //   { text: "New York", value: "New York" },
+      // ],
+      // filteredValue: filteredInfo.address || null,
+      // onFilter: (value, record) => record.address.includes(value as string),
+      // sorter: (a, b) => a.name.length - b.name.length,
+      // sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
@@ -289,7 +280,9 @@ const ApiaryTable = observer(() => {
           Pokaż Ikony
         </Button>
       </div>
-      <Table columns={columns} dataSource={apiaries} loading={loading} />
+      <Flex>
+        <Table columns={columns} dataSource={apiaries} loading={loading} scroll={{ y: 55 * 5 }} pagination={{ pageSize: 5 }} />
+      </Flex>
       {/* Tabela */}
       {/* {apiaryStore.loading ? <Spin /> : <Table dataSource={cloneDeep(apiaryStore.dataApiaries)} columns={columns} rowKey="id" />} */}
     </div>

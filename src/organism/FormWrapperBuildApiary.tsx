@@ -210,9 +210,10 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
           icon={<img src="../../assets/images/icons8-arrow-50.png" alt="Get coordinates" />}
           onClick={async () => {
             // fetch(`https://nominatim.openstreetmap.org/search?country=${countryName}&format=json`)
-            if (city && country) {
-              const cityName = encodeURIComponent(city);
-              const countryName = encodeURIComponent(country);
+            console.log("rrrrrrrrrrrrrrrrrrrrr", city, country);
+            if ((city || editedApiary.city) && (country || editedApiary.country)) {
+              const cityName = encodeURIComponent(city || editedApiary.city);
+              const countryName = encodeURIComponent(country || editedApiary.country);
 
               fetch(`https://nominatim.openstreetmap.org/search?city=${cityName}&country=${countryName}&format=json`)
                 .then((response) => response.json())
@@ -234,8 +235,14 @@ const FormWrapperBuildApiary = observer(({ apiary = [], id, editedApiary, form }
         </Button>
       </div>
 
-      <Modal visible={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
-        <ModalHeaderContent setCoordinates={(coordinates) => setCoordinates(coordinates)} />
+      <Modal
+        visible={modalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+          // setCoordinates({ lat: null, lng: null });
+        }}
+        footer={null}>
+        <ModalHeaderContent setCoordinates={(coordinates) => setCoordinates(coordinates)} coordinates={{ lat, lng }} />
       </Modal>
       <Modal visible={isReadyToGetCoordinate && (!city || !country)} onCancel={() => setReadyToGetCoordinate(false)} footer={null}>
         <div>No country and city</div>
