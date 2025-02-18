@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { ApiaryData, ApiaryElement, Apiary, ApiariesData } from "../interfaces/apiary"; // Assuming your ApiaryData is here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addDoc, collection, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../src/firebase.js";
+// import { db } from "../../src/firebase.js";
+import { db } from "../firebase/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import { map } from "lodash";
@@ -99,19 +100,9 @@ class ApiaryStore {
     this.selectedApiary = selectedApiary;
   };
   addApiary = async (newApiary: ApiaryData) => {
-    // db.collection("Apiaries")
-    //   .add(newApiary)
-    //   .then((docRef: { id: any }) => {
-    //     console.log("Document written with ID: ", docRef.id);
-    //   })
-    //   .catch((error: any) => {
-    //     console.error("Error adding document: ", error);
-    //   });
     const id = uuidv4();
     newApiary.id = id;
-    // db.collection(
     try {
-      // const uid = await authStore.getUser();
       const auth = getAuth();
 
       // lastNotifiedUid
@@ -122,19 +113,99 @@ class ApiaryStore {
       // Add a new document with a generated id.
       // const userDocRef = collection(db, "Apiaries").doc(userId);
       // const querySnapshot = await getDoc(collection(db, "Users"));
-      const docRef = doc(db, "Users", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-      } else {
-        console.log("No such document!");
+      // onst y = await deleteDoc(doc(db, "Users", userId, "Apiaries", idApiary));
+      // const docRef = doc(db, "Users", userId);
+      const docRef = doc(db, "Users", userId, "Apiaries", newApiary.id);
 
-        // docSnap.data() will be undefined in this case
-        const docRef = await addDoc(collection(db, "Users", userId, "Apiaries"), newApiary);
-        console.log("No such document!333", docRef);
-      }
+      const docSnap = await getDoc(docRef);
+      // if (docSnap.exists()) {
+      //   console.log("Document data:", docSnap.data());
+      // } else {
+      //   console.log("No such document!");
+
+      // docSnap.data() will be undefined in this case
+      const docRe = await addDoc(collection(db, "Users", userId, "Apiaries"), newApiary);
+      console.log("No such document!333", docRe);
+      // }
     } catch (error) {
       console.log("Document written with ID: error", error);
+    }
+  };
+  // async getPlans() {
+  //   this.dataApiaries = [];
+  //   const auth = getAuth();
+  //   onAuthStateChanged(auth, async (user) => {
+  //     // const auth = getAuth();
+  //     try {
+  //       const userId = auth?.lastNotifiedUid;
+  //       console.log("dddddddddddddddddd222", auth, userId, auth?.lastNotifiedUid, user);
+  //       const querySnapshot = await getDocs(collection(db, "Users", user.uid, "Calendar"));
+
+  //       // console.log("dddddddddddddddddd222", querySnapshot);
+  //       querySnapshot.forEach((doc) => {
+  //         // doc.data() is never undefined for query doc snapshots
+  //         // console.log("ddddddddddddddddddd", doc.id, " => ", doc.data());
+  //         if (doc.data()) {
+  //           runInAction(() => {
+  //             const data = doc.data();
+  //             data.identifier = doc.id;
+  //             this.dataApiaries = [...this.dataApiaries, data] as any;
+  //             console.log("dddddddddddddddddd111", this.dataApiaries);
+  //             this.setApiarieslist(this.dataApiaries);
+  //             this.editedApiary = null;
+
+  //             // this.setAllDataApiary(doc.data());
+  //             this.loading = false;
+  //           });
+  //         }
+  //       });
+  //     } catch (error) {
+  //       runInAction(() => {
+  //         this.loading = false;
+  //       });
+  //       console.error("Error fetching apiary data:", error);
+  //     }
+  //   });
+  // }
+  addPlans = async (newPlan: any) => {
+    const id = uuidv4();
+    newPlan.id = id;
+    // db.collection(
+    // const uid = await authStore.getUser();
+    const auth = getAuth();
+
+    // lastNotifiedUid
+    // :
+    // "rA9CvTztMRfsNivLL1ANVLMDTFz1"
+    console.log("Document written with IDrrr: ", auth?.lastNotifiedUid, auth.currentUser);
+    const userId = auth?.lastNotifiedUid;
+    // Add a new document with a generated id.
+    // const userDocRef = collection(db, "Apiaries").doc(userId);
+    // const querySnapshot = await getDoc(collection(db, "Users"));
+    // const docRef = doc(db, "Users", userId);
+    const sanitizeData = (data: any) => {
+      return Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== undefined));
+    };
+    try {
+      const subCollectionName = "Calendar";
+
+      // Referencja do podkolekcji
+      const subCollectionRef = collection(db, "Users", userId, subCollectionName);
+
+      // Pobierz wszystkie dokumenty z podkolekcji, aby upewnić się, że istnieje
+      const subCollectionSnap = await getDocs(subCollectionRef);
+
+      if (subCollectionSnap?.empty) {
+        console.log(`Subcollection ${subCollectionName} does not exist. Creating...`);
+      } else {
+        console.log(`Subcollection ${subCollectionName} exists. Adding new document...`);
+      }
+
+      // Dodaj nowy dokument do podkolekcji
+      const newDocRef = await addDoc(subCollectionRef, sanitizeData(newPlan));
+      console.log("Document added with ID:", newDocRef.id);
+    } catch (error) {
+      console.error("Error adding document to Calendar subcollection:", error);
     }
   };
   async removeApiary(id: number) {
@@ -189,72 +260,40 @@ class ApiaryStore {
     });
   };
   async getInitApiaryData() {
-    // const token = sessionStorage.getItem("token");
-    // const config = {
-    //   headers: { "x-auth-token": token },
-    // };
+    this.dataApiaries = [];
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      // const auth = getAuth();
+      try {
+        const userId = auth?.lastNotifiedUid;
+        console.log("dddddddddddddddddd222", auth, userId, auth?.lastNotifiedUid, user);
+        const querySnapshot = await getDocs(collection(db, "Users", user.uid, "Apiaries"));
 
-    // if (token) {
-    try {
-      // const data = await getAsync({
-      //   url: "http://localhost:5000/api/apiary/rows",
-      //   setStatus: this.setStatus.bind(this),
-      //   config,
-      // });
-      // this.dataApiaries = [];
-      // this.apiariesList = [];
-      this.dataApiaries = [];
-      const auth = getAuth();
-      const userId = auth?.lastNotifiedUid;
+        // console.log("dddddddddddddddddd222", querySnapshot);
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          // console.log("ddddddddddddddddddd", doc.id, " => ", doc.data());
+          if (doc.data()) {
+            runInAction(() => {
+              const data = doc.data();
+              data.identifier = doc.id;
+              this.dataApiaries = [...this.dataApiaries, data] as any;
+              console.log("dddddddddddddddddd111", this.dataApiaries);
+              this.setApiarieslist(this.dataApiaries);
+              this.editedApiary = null;
 
-      const querySnapshot = await getDocs(collection(db, "Users", userId, "Apiaries"));
-      // console.log("dddddddddddddddddd222", querySnapshot);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log("ddddddddddddddddddd", doc.id, " => ", doc.data());
-        if (doc.data()) {
-          runInAction(() => {
-            const data = doc.data();
-            data.identifier = doc.id;
-            this.dataApiaries = [...this.dataApiaries, data] as any;
-            console.log("dddddddddddddddddd111", this.dataApiaries);
-            this.setApiarieslist(this.dataApiaries);
-            this.editedApiary = null;
-
-            // this.setAllDataApiary(doc.data());
-            this.loading = false;
-          });
-        }
-      });
-
-      // const citiesRef = collection(db, "Apiaries");
-      // console.log("dddddddddddddddddd222", citiesRef, db);
-
-      // const querySnapshot = await getDocs(citiesRef);
-      // console.log("dddddddddddddddddd111", querySnapshot);
-
-      // querySnapshot.forEach((doc) => {
-      //   // doc.data() is never undefined for query doc snapshots
-      //   console.log("dddddddddddddddddd", doc.id, " => ", doc.data());
-      //   if (doc.data()) {
-      //     runInAction(() => {
-      //       this.setAllDataApiary(doc.data());
-      //       this.loading = false;
-      //     });
-      //   }
-      // });
-    } catch (error) {
-      runInAction(() => {
-        this.loading = false;
-      });
-      console.error("Error fetching apiary data:", error);
-    }
-    // }
-    // else {
-    //   this.router.push({
-    //     path: `/${sessionStorage.getItem("currentLang")?.toLowerCase()}/login`,
-    //   });
-    // }
+              // this.setAllDataApiary(doc.data());
+              this.loading = false;
+            });
+          }
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.loading = false;
+        });
+        console.error("Error fetching apiary data:", error);
+      }
+    });
   }
   updateApiaryData = async (apiary: any) => {
     try {

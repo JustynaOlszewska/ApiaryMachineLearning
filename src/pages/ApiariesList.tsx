@@ -55,8 +55,7 @@ const ApiaryTable = observer(() => {
   const columns: TableProps<DataType>["columns"] = [
     {
       // title: <h1>{t("Welcome to React")}</h1>,
-      title: <h1>Name</h1>,
-
+      title: t("apiaries.table.name"),
       dataIndex: "name",
       key: "name",
       // filters: [
@@ -70,17 +69,17 @@ const ApiaryTable = observer(() => {
       ellipsis: true,
     },
     {
-      title: "Address",
+      title: t("apiaries.table.address"),
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Type",
+      title: t("apiaries.table.type"),
       dataIndex: "type",
       key: "type",
     },
     {
-      title: "Sun exposure",
+      title: t("apiaries.table.sun"),
       key: "sun",
       dataIndex: "sun",
       // render: (_: any, { tags }: any) => (
@@ -100,7 +99,7 @@ const ApiaryTable = observer(() => {
       // ),
     },
     {
-      title: "Hives",
+      title: t("apiaries.table.hives"),
       key: "hives",
       dataIndex: "hives",
       // render: (_: any, { tags }: any) => (
@@ -120,7 +119,7 @@ const ApiaryTable = observer(() => {
       // ),
     },
     {
-      title: "Action",
+      title: t("apiaries.table.action"),
       key: "action",
       render: (
         _: any,
@@ -135,9 +134,9 @@ const ApiaryTable = observer(() => {
             <Button
               onClick={() => {
                 apiaryStore.deleteApiary(record.identifier);
-                apiaryStore.getInitApiaryData();
+                // apiaryStore.getInitApiaryData();
               }}>
-              Delete
+              {t("apiaries.table.delete")}
             </Button>
             <Link
               to={`/${i18next.language}/apiaries/${record.id}/edit`}
@@ -147,7 +146,7 @@ const ApiaryTable = observer(() => {
                 apiaryStore.idChosenApiary = record.key;
                 apiaryStore.editedApiary = record;
               }}>
-              Edit
+              {t("apiaries.table.edit")}
             </Link>
           </Space>
         );
@@ -236,7 +235,7 @@ const ApiaryTable = observer(() => {
   };
   return (
     <div>
-      <div style={{ marginBottom: "16px", display: "flex", gap: "10px", paddingTop: "100px" }}>
+      <div style={{ marginBottom: "16px", display: "flex", gap: "10px" }}>
         {/* Pole do wyszukiwania */}
         {/* value={apiaryStore.filter}  */}
         <Input placeholder="Szukaj" value={filteredValue} onChange={(e) => setFilter(e.target.value)} prefix={<SearchOutlined />} style={{ width: "200px" }} />
@@ -260,7 +259,7 @@ const ApiaryTable = observer(() => {
             apiaryStore.resetSelectedData;
           }}
           icon={<ReloadOutlined />}>
-          Reset
+          {t("apiaries.reset")}
         </Button>
 
         {/* Przycisk do dodania */}
@@ -271,13 +270,13 @@ const ApiaryTable = observer(() => {
               apiaryStore.idChosenApiary = null;
               apiaryStore.editedApiary = null;
             }}>
-            Dodaj Pasiekę
+            {t("apiaries.add")}
           </Link>
         </Button>
 
         {/* Przycisk do przełączania widoczności ikon */}
         <Button onClick={apiaryStore.toggleIconsVisibility} icon={<ToolOutlined />}>
-          Pokaż Ikony
+          {t("apiaries.showIcon")}
         </Button>
       </div>
       <Flex>

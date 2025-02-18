@@ -5,9 +5,14 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 const MainLayout = lazy(() => import("../pages/MainLayout"));
 const ApiariesList = lazy(() => import("../pages/ApiariesList"));
 const LoginForm = lazy(() => import("../pages/LoginForm"));
+const Calendar = lazy(() => import("../organism/Calendar"));
 const RegisterForm = lazy(() => import("../pages/RegisterForm"));
 import apiaryStore from "../stores/ApiaryStore";
 import BuildApiary from "../organism/BuildApiary";
+import { Button } from "antd";
+import authStore from "../stores/AuthStore";
+import Login from "../templates/Login";
+import Plans from "../pages/Plans";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,6 +38,7 @@ const router = createBrowserRouter([
           </Suspense>
         ),
         loader: async ({ request, params }) => {
+          console.log("ddddddddddddddddapiaryStore.getInitApiaryData()");
           await apiaryStore.getInitApiaryData();
           return null;
         },
@@ -57,11 +63,30 @@ const router = createBrowserRouter([
         // },
       },
       {
+        path: "calendar",
+        // name: "apiaries",
+        element: (
+          <Suspense fallback={<div>Ładowanie...</div>}>
+            <Plans />
+            {/* <Calendar /> */}
+          </Suspense>
+        ),
+        // async beforeEnter(to, from, next) {
+        //   const apiaryStore = useApiary();
+        //   await apiaryStore.getInitApiaryData();
+        //   return next();
+        // },
+      },
+      {
         path: "register",
         // name: "apiaries",
         element: (
           <Suspense fallback={<div>Ładowanie...</div>}>
-            <RegisterForm />
+            <>
+              <RegisterForm />
+              <Button onClick={() => authStore.handleLogout()}>hhhhhhhhhhhhhhh</Button>
+              <Login />
+            </>
           </Suspense>
         ),
         // async beforeEnter(to, from, next) {

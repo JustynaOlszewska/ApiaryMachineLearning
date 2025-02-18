@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../assets/styles/organism/_essentialLink.scss";
 import { Typography } from "antd";
 interface EssentialLinkProps {
-  title: string;
-  link: string;
-  icon: string;
+  title?: string;
+  link?: string;
+  icon?: string;
 }
 const EssentialLink = observer(({ title, link, icon }: EssentialLinkProps) => {
   const { essentialLinks } = apiaryStore;
@@ -22,7 +22,7 @@ const EssentialLink = observer(({ title, link, icon }: EssentialLinkProps) => {
   // const [currentLang, setCurrentLang] = useState("en");
   useEffect(() => {
     const currentRoute = sessionStorage.getItem("currentRoute") || Pages.LOGIN;
-    console.log("currentRoute", currentRoute);
+    // console.log("currentRoute", currentRoute);
     if (currentRoute) {
       setStyleActiveElement(currentRoute, true);
     }
@@ -58,7 +58,7 @@ const EssentialLink = observer(({ title, link, icon }: EssentialLinkProps) => {
   };
   // return <div>eeeeeeeeeeeeee</div>;
   return essentialLinks.map((link: { title: string; link: string; icon: any }) => {
-    console.log("link.link", `/${lang}/${link.link}`);
+    // console.log("link.link", `/${lang}/${link.link}`);
     return (
       <div
         className="route-wrapper"

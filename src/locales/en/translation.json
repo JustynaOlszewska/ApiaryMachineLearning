@@ -1,4 +1,20 @@
 {
   "Welcome to React": "Welcome to React and react-i18next",
-  "apiaryList": { "chooseApiary": "Choose apiary" }
+  "apiaryList": { "chooseApiary": "Choose apiary" },
+  "apiaries": {
+    "add": "Add Apiary",
+    "showIcon": "Show Icons",
+    "reset": "Reset",
+    "search": "Search",
+    "table": {
+      "action": "Action",
+      "hives": "Hives",
+      "sun": "Sun Exposure",
+      "type": "Type",
+      "address": "Address",
+      "name": "Name",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  }
 }

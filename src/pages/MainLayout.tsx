@@ -1,211 +1,151 @@
-import React, { useRef, useState } from "react";
-import { Breadcrumb, Button, Drawer, DrawerProps, Layout, Menu, RadioChangeEvent, theme } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Button, Flex, Layout, Menu, theme } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Outlet } from "react-router-dom"; // Dodaj import Outlet
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 import SelectLang from "../organism/SelectLang";
 import Sider from "antd/es/layout/Sider";
-import apiaryStore from "../stores/ApiaryStore";
-import EssentialLink from "../organism/EssentialLink";
-import { NavLink } from "react-router-dom";
+import { faSignsPost, faCalendar, faBoxesStacked, faSignInAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link, useParams } from "react-router-dom";
+
 // interface MainLayoutProps {}
-const siderStyle: React.CSSProperties = {
-  paddingTop: "100px",
-  overflow: "auto",
-  height: "100vh",
-  position: "fixed",
-  insetInlineStart: 0,
-  top: 0,
-  bottom: 0,
-  scrollbarWidth: "thin",
-  scrollbarColor: "unset",
-};
+// const siderStyle: React.CSSProperties = {
+//   // paddingTop: "100px",
+//   overflow: "auto",
+//   height: "100vh",
+//   position: "fixed",
+//   insetInlineStart: 0,
+//   top: 0,
+//   bottom: 0,
+//   scrollbarWidth: "thin",
+//   scrollbarColor: "unset",
+// };
 const MainLayout = () => {
-  // const miniState = useRef(false);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  const [collapsed, setCollapsed] = useState(false);
+  const { lang } = useParams();
 
-  const [miniState, setMiniState] = useState(false);
+  // const [miniState, setMiniState] = useState(false);
 
-  const hideNavigationDescription = () => {
-    var elements = document.querySelectorAll(".navigation-description");
-    console.log("elements", elements);
-    elements.forEach((element) => {
-      element?.classList.toggle("toggle-navigation-description");
-    });
-  };
-  const drawerClick = (e: Event) => {
-    if (miniState) {
-      setMiniState(false);
-      e.stopPropagation();
-    } else {
-      setMiniState(true);
-    }
-  };
+  // const hideNavigationDescription = () => {
+  //   var elements = document.querySelectorAll(".navigation-description");
+  //   console.log("elements", elements);
+  //   elements.forEach((element) => {
+  //     element?.classList.toggle("toggle-navigation-description");
+  //   });
+  // };
+  // const drawerClick = (e: Event) => {
+  //   if (miniState) {
+  //     setMiniState(false);
+  //     e.stopPropagation();
+  //   } else {
+  //     setMiniState(true);
+  //   }
+  // };
+  const essentialLinks = [
+    {
+      key: "1",
+      label: "Apiaries",
+      icon: (
+        <Link to={`/${lang}/apiaries`} className="text-link">
+          <FontAwesomeIcon icon={faSignsPost} />
+        </Link>
+      ),
+      // link: "apiaries",
+      // route: "apiaries",
+    },
+    {
+      key: "2",
 
+      label: "Calendar",
+      icon: (
+        <Link to={`/${lang}/calendar`} className="text-link">
+          <FontAwesomeIcon icon={faCalendar} />
+        </Link>
+      ),
+
+      // link: "calendar",
+      // route: "calendar",
+    },
+    {
+      key: "3",
+
+      label: "Beehives",
+      icon: (
+        <Link to={`/${lang}/beehives`} className="text-link">
+          <FontAwesomeIcon icon={faBoxesStacked} />
+        </Link>
+      ),
+
+      // link: "beehives",
+      // route: "beehives",
+    },
+    {
+      key: "4",
+
+      label: "Login",
+      icon: (
+        <Link to={`/${lang}/login`} className="text-link">
+          <FontAwesomeIcon icon={faSignInAlt} />
+        </Link>
+      ),
+
+      // link: "login",
+      // route: "login",
+    },
+    {
+      key: "5",
+
+      label: "Register",
+      icon: (
+        <Link to={`/${lang}/register`} className="text-link">
+          <FontAwesomeIcon icon={faUserPlus} />
+        </Link>
+      ),
+    },
+  ];
   return (
-    <Layout style={{ marginInlineStart: 200 }}>
-      <Header style={{ display: "flex", alignItems: "center", position: "fixed", zIndex: 10, left: 0, right: 0 }}>
-        <Button
-          icon={<MenuOutlined />}
-          onClick={(event: any) => {
-            hideNavigationDescription();
-            drawerClick(event);
-          }}
-        />
-
-        {/* <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={["2"]}
-            //   items={items}
-            style={{ flex: 1, minWidth: 0 }}>
-            <EssentialLink />
-          </Menu> */}
-        <SelectLang />
-      </Header>
-      <Layout hasSider>
-        <Sider style={siderStyle}>
-          {/* <div className="demo-logo-vertical" /> */}
-          <Menu
-            theme="dark"
-            mode="vertical"
-            defaultSelectedKeys={["2"]}
-            //   items={items}
-            style={{ flex: 1, minWidth: 0 }}>
-            {/* {apiaryStore.essentialLinks.map((link) => {
-            console.log("wwwwwwwwwwwwwwwwwwwwwwww", link);
-            return (
-              <Menu.Item key="1">
-                <NavLink to="/apiaries">{link.title}</NavLink>
-              </Menu.Item>
-            );
-          })} */}
-            <EssentialLink />
-          </Menu>
-          {/* <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]} items={apiaryStore.essentialLinks} /> */}
-          {/* <EssentialLink
-          v-for="link in apiaryStore.essentialLinks"
-          :key="link.link"
-          v-bind="link"
-          @get-data="apiaryStore.getInitApiaryData"
-        /> */}
-        </Sider>
-        <Layout>
-          <Content>
-            <Outlet />
-          </Content>
-          <Footer>Footer</Footer>
-        </Layout>
+    <Layout>
+      <Sider trigger={null} collapsible collapsed={collapsed}>
+        <div className="demo-logo-vertical" />
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]} items={essentialLinks}></Menu>
+      </Sider>
+      <Layout>
+        <Header style={{ padding: 0, background: "black" }}>
+          <Flex>
+            <Button
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={(event: any) => {
+                // hideNavigationDescription();
+                // drawerClick(event);
+                setCollapsed(!collapsed);
+              }}
+              style={{
+                fontSize: "16px",
+                width: 64,
+                height: 64,
+              }}
+            />
+            <SelectLang />
+          </Flex>
+        </Header>
+        <Content
+          style={{
+            margin: "24px 16px",
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}>
+          <Outlet />
+        </Content>
       </Layout>
     </Layout>
   );
 };
 
 export default MainLayout;
-{
-  /* <template>
-  <q-layout view="hHh Lpr lff">
-    <q-header elevated :class="'bg-grey-10'">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="
-            (event) => {
-              hideNavigationDescription();
-              drawerClick(event);
-            }
-          "
-        />
-        <!-- <div> -->
-        <!-- <div>+ Add apiary</div> -->
-        <SelectLang />
-        <!-- </div> -->
-      </q-toolbar>
-    </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      :mini="miniState"
-      class="bg-grey-10 text-white"
-    >
-      <q-list>
-        <EssentialLink
-          v-for="link in apiaryStore.essentialLinks"
-          :key="link.link"
-          v-bind="link"
-          @get-data="apiaryStore.getInitApiaryData"
-        />
-      </q-list>
-    </q-drawer>
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-    <a target="_blank" href="https://icons8.com/icon/NI6BPSi7hsoo/poland"
-      >Poland</a
-    >
-  </q-layout>
-</template>
-
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-import EssentialLink from '@components/EssentialLink.vue';
-import SelectLang from '@components//lang/SelectLang.vue';
-import { useApiary } from '@stores/apiary-store';
-import { useI18n } from 'vue-i18n';
-
-const i18n = useI18n();
-const apiaryStore = useApiary();
-
-const leftDrawerOpen = ref(true);
-
-const miniState = ref(false);
-
-const drawerClick = (e: Event) => {
-  if (miniState.value) {
-    miniState.value = false;
-    e.stopPropagation();
-  } else {
-    miniState.value = true;
-  }
-};
-const hideNavigationDescription = () => {
-  var elements = document.querySelectorAll('.navigation-description');
-  console.log('elements', elements);
-  elements.forEach((element) => {
-    element?.classList.toggle('toggle-navigation-description');
-  });
-};
-
-watch(
-  () => i18n.locale.value,
-  (newValue) => {
-    console.log('watch', newValue);
-    apiaryStore.essentialLinks.forEach((el) => {
-      el.link = `/${newValue}/${el.route}`;
-    });
-  }
-);
-</script>
-<style lag="scss" scoped>
-:deep(.q-field__inner .relative-position .col .self-stretch) {
-  width: 15%;
-}
-:deep(.q-list) {
-  margin-top: 20px;
-}
-:deep(.q-toolbar__title) {
-  background-color: white;
-  position: absolute;
-  right: 0;
-  left: 53px;
-}
-:deep(.q-drawer-container:not(.q-drawer--mini-animate) .q-drawer--mini) {
-  width: 53px !important;
-}
-</style> */
-}

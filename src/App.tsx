@@ -8,9 +8,9 @@ import router from "./routes/routes";
 import "./App.css";
 
 const App = () => {
-  useEffect(() => {
-    console.log("router", router);
-  }, []);
+  // useEffect(() => {
+  //   console.log("router", router);
+  // }, []);
 
   return <RouterProvider router={router} />;
 };

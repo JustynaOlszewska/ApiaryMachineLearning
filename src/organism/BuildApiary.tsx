@@ -8,7 +8,7 @@ import apiaryStore from "../stores/ApiaryStore";
 import "../assets/styles/main.scss";
 import FormWrapperCreateApiary from "../organism/FormWrapperBuildApiary";
 import { foragesOptions, sunOptions, typeOptions } from "../constant/dataInput";
-
+import { ApiaryData } from "../interfaces/apiary";
 // Kontekst do udostępniania stanu
 export const PermissionContext = createContext<boolean | undefined>(undefined);
 
@@ -78,7 +78,9 @@ const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
   }, []);
 
   const onSubmit = async (data: ApiaryData) => {
-    console.log("data", editedApiary, data);
+    console.log("data");
+
+    // console.log("data", editedApiary, data);
 
     !editedApiary && (await addApiary(data));
 
@@ -87,6 +89,7 @@ const CreateApiary: React.FC<CreateApiaryProps> = ({ edit }) => {
       // const updatedApiary = { data, identifier: editedApiary.identifier };
       await updateApiaryData(data);
     }
+    comeBackToApiariesList();
     // apiaryStore.getInitApiaryData();
     // const formData = {
     //   lat,

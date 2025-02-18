@@ -1,4 +1,20 @@
 {
   "Welcome to React": "Witam po polsku",
-  "apiaryList": { "chooseApiary": "Wybierz pasiekę" }
+  "apiaryList": { "chooseApiary": "Wybierz pasiekę" },
+  "apiaries": {
+    "add": "Dodaj pasiekę",
+    "showIcon": "Pokaż ikony",
+    "reset": "Reset",
+    "search": "Szukaj",
+    "table": {
+      "action": "Akcja",
+      "hives": "Ule",
+      "sun": "Ekspozycja na słońce",
+      "type": "Typ",
+      "address": "Adres",
+      "name": "Nazwa",
+      "edit": "Edytuj",
+      "delete": "Usuń"
+    }
+  }
 }

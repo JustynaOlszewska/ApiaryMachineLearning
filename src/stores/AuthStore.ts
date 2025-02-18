@@ -1,7 +1,8 @@
 import { makeAutoObservable } from "mobx";
 import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/firebaseConfig.js";
 // import { setToken } from "../utils/setToken";
 
 class AuthStore {
@@ -21,6 +22,7 @@ class AuthStore {
   getUser = async () => {
     try {
       const auth = getAuth();
+      console.log("get users", auth);
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // Użytkownik jest zalogowany
@@ -92,6 +94,17 @@ class AuthStore {
       console.log("error", error);
     }
   }
+
+  handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("Użytkownik wylogowany");
+        // Tutaj możesz przekierować na stronę główną lub pokazać komunikat
+      })
+      .catch((error) => {
+        console.error("Błąd podczas wylogowywania:", error.message);
+      });
+  };
 }
 
 const authStore = new AuthStore();
